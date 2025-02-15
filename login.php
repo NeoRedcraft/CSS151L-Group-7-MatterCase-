@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $host = 'localhost';
     $db_username = 'root';
     $db_password = '';
-    $database = 'test';
+    $database = 'mattercase';
     
     // Connect to the database
     $conn = mysqli_connect($host, $db_username, $db_password, $database);
@@ -30,7 +30,7 @@ if (mysqli_num_rows($result) > 0) {
     } else {
         echo "User is not an administrator.";
         $_SESSION['username'] = $username;
-        header('Location: viewusers1.php');
+        header('Location: INSERT DASHBOARD HERE');
     }
 } else {
     echo "Invalid username or password.";

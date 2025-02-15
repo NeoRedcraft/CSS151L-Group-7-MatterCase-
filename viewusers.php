@@ -1,8 +1,4 @@
 <?php
-/**
-Crud operation by: Felipe Ante Jr 2023
-**/
-
 // Create database connection using config file
 include_once("config.php");
 

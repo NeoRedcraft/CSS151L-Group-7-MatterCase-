@@ -3,7 +3,7 @@
 $hostname     = "localhost"; 
 $username     = "root";  
 $password     = "";   
-$databasename = "test";  
+$databasename = "mattercase";  
 // Create connection 
 $conn = mysqli_connect($hostname, $username, $password,$databasename);
  // Check connection 

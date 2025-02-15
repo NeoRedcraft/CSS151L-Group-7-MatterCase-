@@ -4,7 +4,7 @@
 </head>
 
 <body>
-	<a href="index.php">Home</a>
+	<a href="login.php">Home</a>
 	<br/><br/>
 
 	<form action="add.php" method="post" name="form1">

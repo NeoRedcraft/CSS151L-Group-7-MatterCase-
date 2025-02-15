@@ -1,11 +1,14 @@
 <?php
+// Encryption key, method, and initialization vector (IV)
+$key = 'somebodyoncetoldmetheworldwasgonnarollmeiaintthesharpesttoolintheshed';
+$method = 'AES-256-CBC';
+$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($method));
 
 include_once("config.php");
 
 // Check if the form was submitted
 if (isset($_POST["submit"])) {
     // Retrieve the form data
-    $username = $_POST["username"];
     $is_admin = 1;
     $firstname = $_POST["firstname"];
     $lastname = $_POST["lastname"];
@@ -13,9 +16,22 @@ if (isset($_POST["submit"])) {
     $password = $_POST["password"];
     $email = $_POST["email"];
 
+    //Encrypt form data
+    $npencryptedusername = openssl_encrypt($username, $method, $key, 0, $iv);
+    $npencryptedfirstname = openssl_encrypt($firstname, $method, $key, 0, $iv);
+    $npencryptedlastname = openssl_encrypt($lastname, $method, $key, 0, $iv);
+    $npencryptedpassword = openssl_encrypt($password, $method, $key, 0, $iv);
+    $npencryptedemail = openssl_encrypt($email, $method, $key, 0, $iv);
+
+    //Prepare encrypted form data for storage
+    $encryptedusername = base64_encode($iv . $npencryptedusername);
+    $encryptedfirstname = base64_encode($iv . $npencryptedfirstname);
+    $encryptedlastname = base64_encode($iv . $npencryptedlastname);
+    $encryptedpassword = base64_encode($iv . $npencryptedpassword);
+    $encryptedemail = base64_encode($iv . $npencryptedemail);
 
     // Insert the user into the database
-    $sql = "INSERT INTO users (username, is_admin, first_name, last_name, password, email) VALUES ('$username', '$is_admin','$firstname','$lastname','$password', '$email')";
+    $sql = "INSERT INTO users (username, is_admin, first_name, last_name, password, email) VALUES ('$encryptedusername', '$is_admin','$encryptedfirstname','$encryptedlastname','$encryptedpassword', '$encryptedemail')";
     if (mysqli_query($conn, $sql)) {
 
    echo "<b>Registration successful!<b>";

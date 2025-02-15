@@ -27,10 +27,4 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
-INSERT INTO `users` (`id`, `is_admin`, `first_name`, `email`, `username`, `mobile`, `last_name`, `password`, `created_at`) 
-VALUES
-  (1, 0, 'User', 'usertest@email.com', 'user', '11111111', 'LName', 'password', '2024-12-19 03:05:49.124006'),
-  (2, 1, 'Admin', 'admintest@email.com', 'administrator', '00000000', 'LName', 'password', '2023-12-19 03:06:12.634024');
-
 COMMIT;

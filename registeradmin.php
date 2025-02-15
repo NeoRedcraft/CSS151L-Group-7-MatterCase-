@@ -1,9 +1,6 @@
 <?php
-// Encryption key, method, and initialization vector (IV)
-$key = 'somebodyoncetoldmetheworldwasgonnarollmeiaintthesharpesttoolintheshed';
-$method = 'AES-256-CBC';
-$iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length($method));
-
+// Include the encryption file
+include_once("encryption.php");
 include_once("config.php");
 
 // Check if the form was submitted
@@ -16,27 +13,18 @@ if (isset($_POST["submit"])) {
     $password = $_POST["password"];
     $email = $_POST["email"];
 
-    //Encrypt form data
-    $npencryptedusername = openssl_encrypt($username, $method, $key, 0, $iv);
-    $npencryptedfirstname = openssl_encrypt($firstname, $method, $key, 0, $iv);
-    $npencryptedlastname = openssl_encrypt($lastname, $method, $key, 0, $iv);
-    $npencryptedpassword = openssl_encrypt($password, $method, $key, 0, $iv);
-    $npencryptedemail = openssl_encrypt($email, $method, $key, 0, $iv);
-
-    //Prepare encrypted form data for storage
-    $encryptedusername = base64_encode($iv . $npencryptedusername);
-    $encryptedfirstname = base64_encode($iv . $npencryptedfirstname);
-    $encryptedlastname = base64_encode($iv . $npencryptedlastname);
-    $encryptedpassword = base64_encode($iv . $npencryptedpassword);
-    $encryptedemail = base64_encode($iv . $npencryptedemail);
+    // Encrypt form data using the encryptData function
+    $encryptedusername = encryptData($username, $key, $method);
+    $encryptedfirstname = encryptData($firstname, $key, $method);
+    $encryptedlastname = encryptData($lastname, $key, $method);
+    $encryptedpassword = encryptData($password, $key, $method);
+    $encryptedemail = encryptData($email, $key, $method);
 
     // Insert the user into the database
     $sql = "INSERT INTO users (username, is_admin, first_name, last_name, password, email) VALUES ('$encryptedusername', '$is_admin','$encryptedfirstname','$encryptedlastname','$encryptedpassword', '$encryptedemail')";
     if (mysqli_query($conn, $sql)) {
-
-   echo "<b>Registration successful!<b>";
-   header('Refresh: 1; URL = login.php');
-
+        echo "<b>Registration successful!<b>";
+        header('Refresh: 1; URL = login.php');
     } else {
         echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }

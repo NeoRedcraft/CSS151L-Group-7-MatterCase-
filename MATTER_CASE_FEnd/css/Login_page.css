@@ -53,16 +53,6 @@ body {
 .login-form button:hover {
     background-color: #0056b3;
 }
-.forgot-password, .signup {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-    padding-bottom: 10px;
-}
-.forgot-password a, .signup a {
-    color: #007bff;
-    text-decoration: none;
-}
 .right-panel {
     flex: 1;
     background: linear-gradient(to bottom, #2a65b8, #0b3d91);

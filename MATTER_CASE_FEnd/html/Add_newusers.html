@@ -7,86 +7,45 @@
   <link rel="stylesheet" href="..\css\Add_newusers.css">
 </head>
 <body>
-  <div class="navbar">
-      <a href="#">Add Cases</a>
-      <a href="#">Add Clients</a>
-      <a href="#">Add Users</a>
-      <a href="#">Audit Log</a>
-  </div>
-  
-  <div class="container">
-      <h2>Add New Users</h2>
-      <form>
-          <div class="form-group">
-              <div>
-                  <label>Login Name</label>
-                  <input type="text" placeholder="Login Name">
-              </div>
-              <div>
-                  <label>Password</label>
-                  <input type="password" placeholder="Password">
-              </div>
-          </div>
-          <div class="form-group">
-              <div>
-                  <label>Email Address</label>
-                  <input type="email" placeholder="Email Address">
-              </div>
-              <div>
-                  <label>Office Name</label>
-                  <input type="text" placeholder="Office Name">
-              </div>
-          </div>
-          <div class="form-group">
-              <div>
-                  <label>First Name</label>
-                  <input type="text" placeholder="First Name">
-              </div>
-              <div>
-                  <label>Last Name</label>
-                  <input type="text" placeholder="Last Name">
-              </div>
-          </div>
-          <div class="form-group">
-              <div>
-                  <label>Second Name</label>
-                  <input type="text" placeholder="Second Name">
-              </div>
-              <div>
-                  <label>Date of Birth</label>
-                  <input type="date">
-              </div>
-          </div>
-          <div class="form-group">
-              <div>
-                  <label>Account Type</label>
-                  <select>
-                      <option>Partner</option>
-                      <option>Lawyer</option>
-                      <option>Paralegal</option>
-                      <option>Messenger</option>
-                  </select>
-              </div>
-              <div>
-                  <label>Mobile Number</label>
-                  <input type="text" placeholder="Mobile Number">
-              </div>
-          </div>
-          <div class="form-group">
-              <div>
-                  <label>Sex</label>
-                  <select>
-                      <option>Male</option>
-                      <option>Female</option>
-                  </select>
-              </div>
-              <div>
-                  <label>Address</label>
-                  <input type="text" placeholder="Address">
-              </div>
-          </div>
-          <button class="btn">Save</button>
-      </form>
-  </div>
+    <img src="..\img\logo.png" alt="Logo" class="logo">
+    
+    <div class="container">
+        <div class="title">Add New User</div>
+        <form action="#">
+            <div class="user-details">
+                <div class="input-box">
+                    <span class="details">Full Name</span>
+                    <input type="text" placeholder="Enter Your Name" required>
+                </div>
+                <div class="input-box">
+                    <span class="details">Email Address</span>
+                    <input type="email" placeholder="Enter Your Email" required>
+                </div>
+                <div class="input-box">
+                    <span class="details">Contact Number</span>
+                    <div class="contact-input">
+                        <select class="country-code">
+                            <option value="+63">+63 (PH)</option>
+                            <option value="+1">+1 (US)</option>
+                            <option value="+44">+44 (UK)</option>
+                            <option value="+91">+91 (IN)</option>
+                            <option value="+81">+81 (JP)</option>
+                        </select>
+                        <input type="tel" placeholder="Enter Your Number" required>
+                    </div>
+                </div>
+                <div class="profile-upload">
+                    <span class="details">Add Profile</span>
+                    <label for="profile-pic" class="upload-box">
+                        <input type="file" id="profile-pic" accept="image/*" hidden>
+                        <span class="upload-text">Upload Photo</span>
+                    </label>
+                </div>
+            </div>
+            <div class="button">
+                <input type="submit" value="ADD">
+            </div>
+        </form>
+    </div>
 </body>
 </html>

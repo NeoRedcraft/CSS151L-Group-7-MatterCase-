@@ -43,7 +43,7 @@ include_once("encryption.php");
 			</tr>
 			<tr> 
 				<td>Password</td>
-				<td><input type="text" name="password"></td>
+				<td><input type="text" name="pass"></td>
 			</tr>
 			<tr> 
 				<td></td>
@@ -75,7 +75,7 @@ include_once("encryption.php");
 		include_once("config.php");
 
 		// Insert the encrypted user data into the database
-		$result = mysqli_query($conn, "INSERT INTO users(first_name, last_name, email, mobile, pass, usertype) VALUES('$encrypted_first_name', '$encrypted_last_name', '$encrypted_email', '$encrypted_mobile', '$encrypted_pass', '$encrypted_usertype')");
+		$result = mysqli_query($conn, "INSERT INTO users(first_name, last_name, email, mobile, password, usertype) VALUES('$encrypted_first_name', '$encrypted_last_name', '$encrypted_email', '$encrypted_mobile', '$encrypted_pass', '$encrypted_usertype')");
 
 		//debug
 		if ($result) {

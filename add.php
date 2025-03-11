@@ -1,6 +1,14 @@
 <?php
 include_once("encryption.php");
 include_once("config.php"); // Include the database connection file
+include_once("auditlog.php"); // Include the audit log module
+
+//session check
+session_start();
+if (!isset($_SESSION['id'])) {
+    header('Location: login.php'); 
+    exit();
+}
 
 // Check if the form was submitted
 if (isset($_POST['Submit'])) {
@@ -21,23 +29,27 @@ if (isset($_POST['Submit'])) {
     $encrypted_pass = encryptData($pass, $key, $method);
     $encrypted_usertype = encryptData($usertype, $key, $method);
 
-    // Use prepared statements to prevent SQL injection
+    // SQL injection prevention using prepared statements
     $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, mobile, pass, usertype, username) VALUES (?, ?, ?, ?, ?, ?, ?)");
     if ($stmt === false) {
         die("Prepare failed: " . $conn->error);
     }
 
-    // Bind parameters
     $stmt->bind_param("sssssis", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $encrypted_mobile, $encrypted_pass, $encrypted_usertype, $username);
 
-    // Execute the statement
     if ($stmt->execute()) {
+        $new_user_id = $stmt->insert_id;
+        $actor_id = $_SESSION['id'];
+
+        // Log the action in the audit log
+        $action = "Added new user with ID: $new_user_id, Username: $username, Usertype: $usertype";
+        logAction($conn, $actor_id, $action);
+
         echo "User added successfully. <a href='viewusers.php'>View Users</a>";
     } else {
         echo "Error: " . $stmt->error;
     }
 
-    // Close the statement
     $stmt->close();
 }
 ?>

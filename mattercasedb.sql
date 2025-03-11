@@ -11,11 +11,16 @@ SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
+-- usertypes
+-- 0 admin
+-- 1 partner
+-- 2 lawyer
+-- 3 paralegal
+-- 4 messenger
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `is_admin` int(1) NOT NULL,
+  `usertype` int(1) NOT NULL,
   `first_name` varchar(100) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `username` varchar(150) NOT NULL,
@@ -48,10 +53,10 @@ CREATE TABLE `cases` (
   `client_id` INT(11) NOT NULL,
   `case_name` VARCHAR(255) NOT NULL,
   `case_type` ENUM('Type 1', 'Type 2') NOT NULL,
-  `lawyer_assigned` INT(11) NOT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`client_id`) REFERENCES `clients`(`id`) ON DELETE CASCADE,
+  `lawyer_assigned` INT(11) NULL,
   FOREIGN KEY (`lawyer_assigned`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

@@ -42,16 +42,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Check if the decrypted username and password match the input
         if ($username === $decrypted_username && $password === $decrypted_password) {
             $login_successful = true;
-
-            // Check if the user is an admin
-            if ($row["is_admin"] == 1) {
-                $_SESSION['username'] = $username;
-                header('Location: viewusers.php');
-                exit();
-            } else {
-                $_SESSION['username'] = $username;
-                header('Location: dashboard.php'); // Replace with your user dashboard page
-                exit();
+            $_SESSION['username'] = $username;
+            // Check usertype
+            //0 - admin
+            //1 - partner
+            //2 - lawyer
+            //3 - paralegal
+            //4 - messenger
+            switch($row["usertype"]){
+                case 0:
+                    header('Location: dashboard_admin.php');
+                    exit();
+                    break;
+                    header('Location: dashboard_partner.php');
+                    exit();
+                    break;
+                case 2:
+                    header('Location: dashboard_lawyer.php');
+                    exit();
+                    break;
+                case 3:
+                    header('Location: dashboard_paralegal.php');
+                    exit();
+                    break;
+                case 4:
+                    header('Location: dashboard_messenger.php');
+                    exit();
+                    break;
+                
             }
         }
     }

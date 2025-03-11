@@ -21,21 +21,29 @@ include_once("encryption.php");
 				<td>LastName</td>
 				<td><input type="text" name="last_name"></td>
 			</tr>
+			<tr>
+				<td>User Type</td>
+				<td>
+					<select name="usertype" id="usertype">
+						<option value="0">Administrator</option>
+						<option value="1">Partner</option>
+						<option value="2">Lawyer</option>
+						<option value="3">Paralegal</option>
+						<option value="4">Messenger</option>
+					</select>
+				</td>
+			</tr>
 			<tr> 
 				<td>Email</td>
 				<td><input type="text" name="email"></td>
-			</tr>
-			<tr> 
-				<td>Username</td>
-				<td><input type="text" name="mobile"></td>
-			</tr>
+			</tr>>
 			<tr> 
 				<td>Mobile</td>
 				<td><input type="text" name="mobile"></td>
 			</tr>
 			<tr> 
 				<td>Password</td>
-				<td><input type="text" name="mobile"></td>
+				<td><input type="text" name="password"></td>
 			</tr>
 			<tr> 
 				<td></td>
@@ -52,18 +60,22 @@ include_once("encryption.php");
 		$last_name = $_POST['last_name'];
 		$email = $_POST['email'];
 		$mobile = $_POST['mobile'];
+		$pass = $_POST['pass'];
+		$usertype = $_POST['usertype'];
 
 		// Encrypt the form data using the encryptData function
 		$encrypted_first_name = encryptData($first_name, $key, $method);
 		$encrypted_last_name = encryptData($last_name, $key, $method);
 		$encrypted_email = encryptData($email, $key, $method);
 		$encrypted_mobile = encryptData($mobile, $key, $method);
+		$encrypted_pass = encryptData($pass, $key, $method);
+		$encrypted_usertype = encryptData($usertype, $key, $method);
 
 		// connect 2 database
 		include_once("config.php");
 
 		// Insert the encrypted user data into the database
-		$result = mysqli_query($conn, "INSERT INTO users(first_name, last_name, email, mobile) VALUES('$encrypted_first_name', '$encrypted_last_name', '$encrypted_email', '$encrypted_mobile')");
+		$result = mysqli_query($conn, "INSERT INTO users(first_name, last_name, email, mobile, pass, usertype) VALUES('$encrypted_first_name', '$encrypted_last_name', '$encrypted_email', '$encrypted_mobile', '$encrypted_pass', '$encrypted_usertype')");
 
 		//debug
 		if ($result) {

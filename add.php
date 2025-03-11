@@ -1,89 +1,98 @@
 <?php
 include_once("encryption.php");
+include_once("config.php"); // Include the database connection file
+
+// Check if the form was submitted
+if (isset($_POST['Submit'])) {
+    // Retrieve the form data
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $email = $_POST['email'];
+    $mobile = $_POST['mobile'];
+    $pass = $_POST['pass'];
+    $usertype = $_POST['usertype'];
+    $username = $_POST['username'];
+
+    // Encrypt the form data using the encryptData function
+    $encrypted_first_name = encryptData($first_name, $key, $method);
+    $encrypted_last_name = encryptData($last_name, $key, $method);
+    $encrypted_email = encryptData($email, $key, $method);
+    $encrypted_mobile = encryptData($mobile, $key, $method);
+    $encrypted_pass = encryptData($pass, $key, $method);
+    $encrypted_usertype = encryptData($usertype, $key, $method);
+
+    // Use prepared statements to prevent SQL injection
+    $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, mobile, pass, usertype, username) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    // Bind parameters
+    $stmt->bind_param("sssssis", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $encrypted_mobile, $encrypted_pass, $encrypted_usertype, $username);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        echo "User added successfully. <a href='viewusers.php'>View Users</a>";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    // Close the statement
+    $stmt->close();
+}
 ?>
 
 <html>
 <head>
-	<title>Add Users</title>
+    <title>Add Users</title>
 </head>
-
 <body>
-	<a href="login.php">Home</a>
-	<br/><br/>
+    <a href="login.php">Home</a>
+    <br/><br/>
 
-	<form action="add.php" method="post" name="form1">
-		<table width="25%" border="0">
-			<tr> 
-				<td>FirstName</td>
-				<td><input type="text" name="first_name"></td>
-			</tr>
-			<tr> 
-				<td>LastName</td>
-				<td><input type="text" name="last_name"></td>
-			</tr>
-			<tr>
-				<td>User Type</td>
-				<td>
-					<select name="usertype" id="usertype">
-						<option value="0">Administrator</option>
-						<option value="1">Partner</option>
-						<option value="2">Lawyer</option>
-						<option value="3">Paralegal</option>
-						<option value="4">Messenger</option>
-					</select>
-				</td>
-			</tr>
-			<tr> 
-				<td>Email</td>
-				<td><input type="text" name="email"></td>
-			</tr>>
-			<tr> 
-				<td>Mobile</td>
-				<td><input type="text" name="mobile"></td>
-			</tr>
-			<tr> 
-				<td>Password</td>
-				<td><input type="text" name="pass"></td>
-			</tr>
-			<tr> 
-				<td></td>
-				<td><input type="submit" name="Submit" value="Add"></td>
-			</tr>
-		</table>
-	</form>
-	
-	<?php
-	// Check if the form was submitted
-	if (isset($_POST['Submit'])) {
-		// Retrieve the form data
-		$first_name = $_POST['first_name'];
-		$last_name = $_POST['last_name'];
-		$email = $_POST['email'];
-		$mobile = $_POST['mobile'];
-		$pass = $_POST['pass'];
-		$usertype = $_POST['usertype'];
-
-		// Encrypt the form data using the encryptData function
-		$encrypted_first_name = encryptData($first_name, $key, $method);
-		$encrypted_last_name = encryptData($last_name, $key, $method);
-		$encrypted_email = encryptData($email, $key, $method);
-		$encrypted_mobile = encryptData($mobile, $key, $method);
-		$encrypted_pass = encryptData($pass, $key, $method);
-		$encrypted_usertype = encryptData($usertype, $key, $method);
-
-		// connect 2 database
-		include_once("config.php");
-
-		// Insert the encrypted user data into the database
-		$result = mysqli_query($conn, "INSERT INTO users(first_name, last_name, email, mobile, password, usertype) VALUES('$encrypted_first_name', '$encrypted_last_name', '$encrypted_email', '$encrypted_mobile', '$encrypted_pass', '$encrypted_usertype')");
-
-		//debug
-		if ($result) {
-			echo "User added successfully. <a href='viewusers.php'>View Users</a>";
-		} else {
-			echo "Error: " . mysqli_error($conn);
-		}
-	}
-	?>
+    <form action="add.php" method="post" name="form1">
+        <table width="25%" border="0">
+            <tr> 
+                <td>FirstName</td>
+                <td><input type="text" name="first_name"></td>
+            </tr>
+            <tr> 
+                <td>LastName</td>
+                <td><input type="text" name="last_name"></td>
+            </tr>
+            <tr> 
+                <td>UserName</td>
+                <td><input type="text" name="username"></td>
+            </tr>
+            <tr>
+                <td>User Type</td>
+                <td>
+                    <select name="usertype" id="usertype">
+                        <option value="0">Administrator</option>
+                        <option value="1">Partner</option>
+                        <option value="2">Lawyer</option>
+                        <option value="3">Paralegal</option>
+                        <option value="4">Messenger</option>
+                    </select>
+                </td>
+            </tr>
+            <tr> 
+                <td>Email</td>
+                <td><input type="text" name="email"></td>
+            </tr>
+            <tr> 
+                <td>Mobile</td>
+                <td><input type="text" name="mobile"></td>
+            </tr>
+            <tr> 
+                <td>Password</td>
+                <td><input type="text" name="pass"></td>
+            </tr>
+            <tr> 
+                <td></td>
+                <td><input type="submit" name="Submit" value="Add"></td>
+            </tr>
+        </table>
+    </form>
 </body>
 </html>

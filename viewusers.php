@@ -29,7 +29,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY id DESC");
         // Decrypt the data
         $firstname = decryptData($user_data['first_name'], $key, $method);
         $lastname = decryptData($user_data['last_name'], $key, $method);
-        $username = decryptData($user_data['username'], $key, $method);
+        $username = $user_data['username'];
         $email = decryptData($user_data['email'], $key, $method);
 
         echo "<tr>";

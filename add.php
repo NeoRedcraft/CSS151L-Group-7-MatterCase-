@@ -16,26 +16,24 @@ if (isset($_POST['Submit'])) {
     $first_name = $_POST['first_name'];
     $last_name = $_POST['last_name'];
     $email = $_POST['email'];
-    $mobile = $_POST['mobile'];
     $pass = $_POST['pass'];
     $usertype = $_POST['usertype'];
     $username = $_POST['username'];
 
-    // Encrypt the form data using the encryptData function
+    // Encrypttion
     $encrypted_first_name = encryptData($first_name, $key, $method);
     $encrypted_last_name = encryptData($last_name, $key, $method);
     $encrypted_email = encryptData($email, $key, $method);
-    $encrypted_mobile = encryptData($mobile, $key, $method);
     $encrypted_pass = encryptData($pass, $key, $method);
     $encrypted_usertype = encryptData($usertype, $key, $method);
 
-    // SQL injection prevention using prepared statements
-    $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, mobile, pass, usertype, username) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    // SQL injection prevention
+    $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, pass, usertype, username) VALUES (?, ?, ?, ?, ?, ?, ?)");
     if ($stmt === false) {
         die("Prepare failed: " . $conn->error);
     }
 
-    $stmt->bind_param("sssssis", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $encrypted_mobile, $encrypted_pass, $encrypted_usertype, $username);
+    $stmt->bind_param("sssssis", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $encrypted_pass, $encrypted_usertype, $username);
 
     if ($stmt->execute()) {
         $new_user_id = $stmt->insert_id;
@@ -91,10 +89,6 @@ if (isset($_POST['Submit'])) {
             <tr> 
                 <td>Email</td>
                 <td><input type="text" name="email"></td>
-            </tr>
-            <tr> 
-                <td>Mobile</td>
-                <td><input type="text" name="mobile"></td>
             </tr>
             <tr> 
                 <td>Password</td>

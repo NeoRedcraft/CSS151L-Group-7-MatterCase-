@@ -25,14 +25,11 @@ CREATE TABLE `users` (
   `last_name` varchar(150) NOT NULL,
   `email` varchar(100) DEFAULT NULL,
   `username` varchar(150) NOT NULL,
-  `mobile` varchar(15) DEFAULT NULL,
   `pass` varchar(150) NOT NULL,
   `created_at` timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-COMMIT;
 
 -- Create Clients Table
 CREATE TABLE `clients` (
@@ -40,7 +37,6 @@ CREATE TABLE `clients` (
   `client_name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(100) DEFAULT NULL,
   `address` TEXT DEFAULT NULL,
-  `mobile` VARCHAR(15) DEFAULT NULL,
   `profile_picture` VARCHAR(255) DEFAULT NULL,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -69,3 +65,5 @@ CREATE TABLE `audit_log` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+COMMIT;

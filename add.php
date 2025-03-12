@@ -1,4 +1,5 @@
 <?php
+//include_once ("MATTER_CASE_FEnd/html/Add_newusers.html");
 include_once("encryption.php");
 include_once("config.php"); // Include the database connection file
 include_once("auditlog.php"); // Include the audit log module
@@ -28,12 +29,12 @@ if (isset($_POST['Submit'])) {
     $encrypted_usertype = encryptData($usertype, $key, $method);
 
     // SQL injection prevention
-    $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, pass, usertype, username) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, pass, usertype, username) VALUES (?, ?, ?, ?, ?, ?)");
     if ($stmt === false) {
         die("Prepare failed: " . $conn->error);
     }
 
-    $stmt->bind_param("sssssis", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $encrypted_pass, $encrypted_usertype, $username);
+    $stmt->bind_param("ssssss", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $encrypted_pass, $encrypted_usertype, $username);
 
     if ($stmt->execute()) {
         $new_user_id = $stmt->insert_id;
@@ -51,7 +52,6 @@ if (isset($_POST['Submit'])) {
     $stmt->close();
 }
 ?>
-
 <html>
 <head>
     <title>Add Users</title>
@@ -102,3 +102,4 @@ if (isset($_POST['Submit'])) {
     </form>
 </body>
 </html>
+

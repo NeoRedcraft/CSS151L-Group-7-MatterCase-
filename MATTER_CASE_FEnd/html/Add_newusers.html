@@ -9,41 +9,46 @@
 <body>
     <img src="..\img\logo.png" alt="Logo" class="logo">
     
-    <div class="container">
+    <div class="container"> 
         <div class="title">Add New User</div>
         <form action="#">
             <div class="user-details">
                 <div class="input-box">
-                    <span class="details">Full Name</span>
-                    <input type="text" placeholder="Enter Your Name" required>
+                    <span class="details">First Name</span> <!--First Name-->
+                    <input type="text" name="first_name" placeholder="Enter The Firstname" required>
                 </div>
                 <div class="input-box">
-                    <span class="details">Email Address</span>
-                    <input type="email" placeholder="Enter Your Email" required>
+                    <span class="details">Last Name</span> <!--Last Name-->
+                    <input type="text" name="last_name" placeholder="Enter The Lastname" required>
                 </div>
                 <div class="input-box">
-                    <span class="details">Contact Number</span>
+                    <span class="details">User Name</span> <!--User Name-->
+                    <input type="text" name="user_name" placeholder="Enter The Username" required>
+                </div>
+                <div class="input-box">
+                    <span class="details">Email Address</span> <!--Email-->
+                    <input type="text" name="email" placeholder="Enter The Email" required>
+                </div>
+                <div class="input-box">
+                    <span class="details">Password</span> <!--Password-->
+                    <input type="text" name="pass" placeholder="Enter The Password" required>
+                </div>
+                <div class="input-box">
+                    <span class="details">User Type</span> <!--UserType-->
                     <div class="contact-input">
-                        <select class="country-code">
-                            <option value="+63">+63 (PH)</option>
-                            <option value="+1">+1 (US)</option>
-                            <option value="+44">+44 (UK)</option>
-                            <option value="+91">+91 (IN)</option>
-                            <option value="+81">+81 (JP)</option>
+                        <select class="country-code" name="usertype" id="usertype">
+                            <option value="0">Adminstrator</option>
+                            <option value="1">Partner</option>
+                            <option value="2">Lawyer</option>
+                            <option value="3">Paralegal</option>
+                            <option value="4">Messenger</option>
                         </select>
-                        <input type="tel" placeholder="Enter Your Number" required>
                     </div>
-                </div>
-                <div class="profile-upload">
-                    <span class="details">Add Profile</span>
-                    <label for="profile-pic" class="upload-box">
-                        <input type="file" id="profile-pic" accept="image/*" hidden>
-                        <span class="upload-text">Upload Photo</span>
-                    </label>
                 </div>
             </div>
             <div class="button">
-                <input type="submit" value="ADD">
+                <input type="submit" name="Submit" value="Add">
+                <input href="..\..\login.php" type="submit" name="Home" value="HOME">
             </div>
         </form>
     </div>

@@ -1,7 +1,8 @@
 <?php
 include_once("encryption.php");
-include_once("config.php"); // Include the database connection file
-include_once("auditlog.php"); // Include the audit log module
+include_once("config.php"); 
+include_once("auditlog.php"); 
+include_once("emailunique.php"); 
 
 //session check
 session_start();
@@ -19,35 +20,38 @@ if (isset($_POST['Submit'])) {
     $pass = $_POST['pass'];
     $usertype = $_POST['usertype'];
     $username = $_POST['username'];
-
-    // Encrypttion
-    $encrypted_first_name = encryptData($first_name, $key, $method);
-    $encrypted_last_name = encryptData($last_name, $key, $method);
-    $encrypted_email = encryptData($email, $key, $method);
-    $encrypted_pass = encryptData($pass, $key, $method);
-
-    // SQL injection prevention
-    $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, pass, usertype, username) VALUES (?, ?, ?, ?, ?, ?)");
-    if ($stmt === false) {
-        die("Prepare failed: " . $conn->error);
-    }
-
-    $stmt->bind_param("ssssis", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $encrypted_pass, $usertype, $username);
-
-    if ($stmt->execute()) {
-        $new_user_id = $stmt->insert_id;
-        $actor_id = $_SESSION['id'];
-
-        // Log the action in the audit log
-        $action = "Added new user with ID: $new_user_id, Username: $username, Usertype: $usertype";
-        logAction($conn, $actor_id, $action);
-
-        echo "User added successfully. <a href='viewusers.php'>View Users</a>";
+    if (!isEmailUnique($conn, $email, $key, $method)) {
+        echo "Error: Email already exists. Please use a different email address.";
     } else {
-        echo "Error: " . $stmt->error;
-    }
+        // Encrypttion
+        $encrypted_first_name = encryptData($first_name, $key, $method);
+        $encrypted_last_name = encryptData($last_name, $key, $method);
+        $encrypted_email = encryptData($email, $key, $method);
+        $encrypted_pass = encryptData($pass, $key, $method);
 
-    $stmt->close();
+        // SQL injection prevention
+        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, pass, usertype, username) VALUES (?, ?, ?, ?, ?, ?)");
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("ssssis", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $encrypted_pass, $usertype, $username);
+
+        if ($stmt->execute()) {
+            $new_user_id = $stmt->insert_id;
+            $actor_id = $_SESSION['id'];
+
+            // Log the action in the audit log
+            $action = "Added new user with ID: $new_user_id, Username: $username, Usertype: $usertype";
+            logAction($conn, $actor_id, $action);
+
+            echo "User added successfully. <a href='viewusers.php'>View Users</a>";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
+    }
 }
 ?>
 

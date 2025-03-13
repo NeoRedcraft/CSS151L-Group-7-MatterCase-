@@ -4,6 +4,7 @@ include_once("config.php");
 include_once("encryption.php");
 include_once("decrypt.php");
 include_once("auditlog.php"); 
+include_once("emailunique.php"); 
 
 // Check if form is submitted for user update
 if (isset($_POST['update'])) {
@@ -31,53 +32,56 @@ if (isset($_POST['update'])) {
     $new_email = $_POST['email'];
     $new_username = $_POST['username'];
     $new_pass = $_POST['pass'];
-
-    // Encrypt the new data
-    $encrypted_first_name = encryptData($new_first_name, $key, $method);
-    $encrypted_last_name = encryptData($new_last_name, $key, $method);
-    $encrypted_email = encryptData($new_email, $key, $method);
-    $encrypted_pass = encryptData($new_pass, $key, $method);
-
-    // Compare old and new data to log changes
-    $changes = [];
-    if ($new_first_name !== $old_first_name) {
-        $changes[] = "First Name: '$old_first_name' -> '$new_first_name'";
-    }
-    if ($new_last_name !== $old_last_name) {
-        $changes[] = "Last Name: '$old_last_name' -> '$new_last_name'";
-    }
-    if ($new_email !== $old_email) {
-        $changes[] = "Email: '$old_email' -> '$new_email'";
-    }
-    if ($new_username !== $old_username) {
-        $changes[] = "Username: '$old_username' -> '$new_username'"; // Log username changes
-    }
-    if ($new_pass !== $old_pass) {
-        $changes[] = "Password: Updated"; // Avoid logging actual passwords
-    }
-
-    // Log changes if any
-    if (!empty($changes)) {
-        $action = "Updated user ID $id: " . implode(", ", $changes);
-        logAction($conn, $_SESSION['id'], $action); // Log the action
-    }
-
-    // Update the user data in the database
-    $stmt = $conn->prepare("UPDATE users SET first_name=?, last_name=?, email=?, username=?, pass=? WHERE id=?");
-    if ($stmt === false) {
-        die("Prepare failed: " . $conn->error);
-    }
-
-    $stmt->bind_param("sssssi", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $new_username, $encrypted_pass, $id);
-
-    if ($stmt->execute()) {
-        header("Location: viewusers.php");
-        exit();
+    if (!isEmailUnique($conn, $email, $key, $method)) {
+        echo "Error: Email already exists. Please use a different email address.";
     } else {
-        echo "Error updating record: " . $stmt->error;
-    }
+        // Encrypt the new data
+        $encrypted_first_name = encryptData($new_first_name, $key, $method);
+        $encrypted_last_name = encryptData($new_last_name, $key, $method);
+        $encrypted_email = encryptData($new_email, $key, $method);
+        $encrypted_pass = encryptData($new_pass, $key, $method);
 
-    $stmt->close();
+        // Compare old and new data to log changes
+        $changes = [];
+        if ($new_first_name !== $old_first_name) {
+            $changes[] = "First Name: Updated";
+        }
+        if ($new_last_name !== $old_last_name) {
+            $changes[] = "Last Name: Updated";
+        }
+        if ($new_email !== $old_email) {
+            $changes[] = "Email: Updated";
+        }
+        if ($new_username !== $old_username) {
+            $changes[] = "Username: '$old_username' -> '$new_username'";
+        }
+        if ($new_pass !== $old_pass) {
+            $changes[] = "Password: Updated"; 
+        }
+
+        // Log changes if any
+        if (!empty($changes)) {
+            $action = "Updated user ID $id: " . implode(", ", $changes);
+            logAction($conn, $_SESSION['id'], $action); 
+        }
+
+        // Update the user data in the database
+        $stmt = $conn->prepare("UPDATE users SET first_name=?, last_name=?, email=?, username=?, pass=? WHERE id=?");
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("sssssi", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $new_username, $encrypted_pass, $id);
+
+        if ($stmt->execute()) {
+            header("Location: viewusers.php");
+            exit();
+        } else {
+            echo "Error updating record: " . $stmt->error;
+        }
+
+        $stmt->close();
+    }
 }
 
 // Display selected user data based on id

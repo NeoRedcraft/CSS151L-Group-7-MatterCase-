@@ -16,6 +16,7 @@ function isEmailUnique($conn, $email, $key, $method) {
         $encrypted_email = $row['email'];
         $decrypted_email = decryptData($encrypted_email, $key, $method);
 
+        // Compare the decrypted email with the input email
         if ($decrypted_email === $email) {
             return false; // Email is not unique
         }

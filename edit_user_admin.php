@@ -1,10 +1,10 @@
 <?php
 session_start();
-include_once("config.php");
-include_once("encryption.php");
-include_once("decrypt.php");
-include_once("audit_log.php"); 
-include_once("email_unique.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/config.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/encryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/decrypt.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/audit_log.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/email_unique.php"); 
 
 // Check if form is submitted for user update
 if (isset($_POST['update'])) {
@@ -110,7 +110,7 @@ if ($result && mysqli_num_rows($result) > 0) {
     <title>Edit User Data</title>
 </head>
 <body>
-    <a href="viewusers.php">Home</a>
+    <a href="view_users_admin.php">Home</a>
     <br/><br/>
     
     <form name="update_user" method="post" action="edit.php">

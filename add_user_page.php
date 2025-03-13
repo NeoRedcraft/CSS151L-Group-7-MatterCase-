@@ -1,8 +1,8 @@
 <?php
-include_once("encryption.php");
-include_once("config.php"); 
-include_once("audit_log.php"); 
-include_once("email_unique.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/encryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/config.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/audit_log.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/email_unique.php"); 
 
 //session check
 session_start();

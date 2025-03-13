@@ -68,7 +68,7 @@ if (isset($_POST['update'])) {
         die("Prepare failed: " . $conn->error);
     }
 
-    $stmt->bind_param("ssssssi", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $new_username, $encrypted_pass, $id);
+    $stmt->bind_param("sssssi", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $new_username, $encrypted_pass, $id);
 
     if ($stmt->execute()) {
         header("Location: viewusers.php");

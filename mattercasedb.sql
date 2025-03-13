@@ -31,6 +31,13 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- test admin
+-- email: admin@email.com
+-- password: password
+INSERT INTO users (id, usertype,email, pass)
+VALUES (1, 0, 'RDFAhvI7KF2y4RH6OPZJZGJLY0pxS2JvNFRPZS82THB3WUYwWVE9PQ==', '+lFCT9HtHdx4AwBuhiWSNkhqbWRJRUFCTVgvcHlIQjFKek9BZFE9PQ==');
+
+
 -- Create Clients Table
 CREATE TABLE `clients` (
   `id` INT(11) NOT NULL AUTO_INCREMENT,
@@ -133,11 +140,4 @@ CREATE TABLE evidence (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (case_id) REFERENCES cases(case_id) ON DELETE CASCADE
 );
-
--- test admin
--- email: admin@email.com
--- password: password
-INSERT INTO users (id, usertype,email, pass)
-VALUES (1, 0, 'RDFAhvI7KF2y4RH6OPZJZGJLY0pxS2JvNFRPZS82THB3WUYwWVE9PQ==', '+lFCT9HtHdx4AwBuhiWSNkhqbWRJRUFCTVgvcHlIQjFKek9BZFE9PQ==');
-
 COMMIT;

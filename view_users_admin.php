@@ -1,11 +1,8 @@
 <?php
 // Create database connection using config file
-include_once("config.php");
-include_once("decrypt.php");
-include_once("encryption.php");
-// Encryption key and method
-$key = 'somebodyoncetoldmetheworldwasgonnarollmeiaintthesharpesttoolintheshed';
-$method = 'AES-256-CBC';
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/config.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/decrypt.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/encryption.php");
 
 // Fetch all users data from database
 $result = mysqli_query($conn, "SELECT * FROM users ORDER BY id DESC");
@@ -39,7 +36,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY id DESC");
         echo "<td>".$lastname."</td>";
         echo "<td>".$username."</td>";
         echo "<td>".$email."</td>";    
-        echo "<td><a href='edit.php?id=$user_data[id]'>Edit</a> | <a href='delete.php?id=$user_data[id]'>Delete</a></td></tr>";        
+        echo "<td><a href='edit_user_admin.php?id=$user_data[id]'>Edit</a> | <a href='delete_user.php?id=$user_data[id]'>Delete</a></td></tr>";        
     }
     ?>
     </table>

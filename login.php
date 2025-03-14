@@ -2,9 +2,13 @@
 session_start();
 
 // Include the encryption file
-include_once("encryption.php");
-include_once("decrypt.php");
-
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/encryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/decrypt.php");
+$testemail = decryptData("RDFAhvI7KF2y4RH6OPZJZGJLY0pxS2JvNFRPZS82THB3WUYwWVE9PQ==", $key, $method);
+$testpass = decryptData("+lFCT9HtHdx4AwBuhiWSNkhqbWRJRUFCTVgvcHlIQjFKek9BZFE9PQ==", $key, $method);
+//remove this shit later
+echo $testemail;
+echo $testpass;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $pass = $_POST['pass'];

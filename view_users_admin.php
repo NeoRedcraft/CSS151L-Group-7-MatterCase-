@@ -1,8 +1,11 @@
 <?php
 // Create database connection using config file
-include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/config.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/decrypt.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/encryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/ITS122L-MatterCase/Functions/config.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/ITS122L-MatterCase/Functions/decrypt.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/ITS122L-MatterCase/Functions/encryption.php");
+// Encryption key and method
+$key = 'somebodyoncetoldmetheworldwasgonnarollmeiaintthesharpesttoolintheshed';
+$method = 'AES-256-CBC';
 
 // Fetch all users data from database
 $result = mysqli_query($conn, "SELECT * FROM users ORDER BY id DESC");
@@ -13,7 +16,7 @@ $result = mysqli_query($conn, "SELECT * FROM users ORDER BY id DESC");
 <head>    
     <title>Homepage</title>
 </head>
-<form method="POST" action="add.php">
+<form method="POST" action="add_user_page.php">
 <body>
     <h2>Welcome Administrator</h2><br />
     <input type="submit" name="submit" value="Add New User"> <br /><br />

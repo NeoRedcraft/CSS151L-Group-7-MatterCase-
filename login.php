@@ -2,9 +2,13 @@
 session_start();
 
 // Include the encryption file
-include_once($_SERVER['DOCUMENT_ROOT'] . "/ITS122L-MatterCase/Functions/encryption.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/ITS122L-MatterCase/Functions/decrypt.php");
-
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/encryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/decrypt.php");
+$testemail = decryptData("RDFAhvI7KF2y4RH6OPZJZGJLY0pxS2JvNFRPZS82THB3WUYwWVE9PQ==", $key, $method);
+$testpass = decryptData("+lFCT9HtHdx4AwBuhiWSNkhqbWRJRUFCTVgvcHlIQjFKek9BZFE9PQ==", $key, $method);
+//remove this shit later
+echo $testemail;
+echo $testpass;
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $pass = $_POST['pass'];
@@ -87,3 +91,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     mysqli_close($conn);
 }
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>  
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login Now</h1>
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+        <label>Email:</label>
+        <input type="text" name="username"><br><br>
+        <label>Password:</label>
+        <input type="password" name="pass"><br><br>
+        <input type="submit" value="Login"><br><br>
+    </form>
+</body>
+</html>

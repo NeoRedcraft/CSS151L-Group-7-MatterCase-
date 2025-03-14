@@ -1,15 +1,20 @@
 <?php
+<<<<<<< HEAD
 //include_once ("MATTER_CASE_FEnd/html/Add_newusers.html");
 include_once("encryption.php");
 include_once("config.php"); // Include the database connection file
 include_once("auditlog.php"); // Include the audit log module
 
 //session check
+=======
+>>>>>>> dfc7b567efdc9de445b74406c4cc04ed8f6c73cb
 session_start();
 if (!isset($_SESSION['id'])) {
     header('Location: login.php'); 
     exit();
 }
+
+include_once($_SERVER['DOCUMENT_ROOT'] . "/ITS122L-MatterCase/Functions/add_user.php");
 
 // Check if the form was submitted
 if (isset($_POST['Submit'])) {
@@ -20,6 +25,7 @@ if (isset($_POST['Submit'])) {
     $pass = $_POST['pass'];
     $usertype = $_POST['usertype'];
     $username = $_POST['username'];
+<<<<<<< HEAD
 
     // Encrypttion
     $encrypted_first_name = encryptData($first_name, $key, $method);
@@ -51,30 +57,15 @@ if (isset($_POST['Submit'])) {
         $encrypted_last_name = encryptData($last_name, $key, $method);
         $encrypted_email = encryptData($email, $key, $method);
         $encrypted_pass = encryptData($pass, $key, $method);
+=======
+    $actor_id = $_SESSION['id'];
+>>>>>>> dfc7b567efdc9de445b74406c4cc04ed8f6c73cb
 
-        // SQL injection prevention
-        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, pass, usertype, username) VALUES (?, ?, ?, ?, ?, ?)");
-        if ($stmt === false) {
-            die("Prepare failed: " . $conn->error);
-        }
+    // Call the addUser function
+    $result = addUser($conn, $first_name, $last_name, $email, $pass, $usertype, $username, $key, $method, $actor_id);
 
-        $stmt->bind_param("ssssis", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $encrypted_pass, $usertype, $username);
-
-        if ($stmt->execute()) {
-            $new_user_id = $stmt->insert_id;
-            $actor_id = $_SESSION['id'];
-
-            // Log the action in the audit log
-            $action = "Added new user with ID: $new_user_id, Username: $username, Usertype: $usertype";
-            logAction($conn, $actor_id, $action);
-
-            echo "User added successfully. <a href='viewusers.php'>View Users</a>";
-        } else {
-            echo "Error: " . $stmt->error;
-        }
-
-        $stmt->close();
-    }
+    // Display the result
+    echo $result;
 }
 ?>
 <html>
@@ -85,7 +76,7 @@ if (isset($_POST['Submit'])) {
     <a href="login.php">Home</a>
     <br/><br/>
 
-    <form action="add.php" method="post" name="form1">
+    <form action="add_user_page.php" method="post" name="form1">
         <table width="25%" border="0">
             <tr> 
                 <td>FirstName</td>

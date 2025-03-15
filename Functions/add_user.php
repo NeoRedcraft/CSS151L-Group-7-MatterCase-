@@ -1,9 +1,9 @@
 <?php
 
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsencryption.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsconfig.php"); 
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsaudit_log.php"); 
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsemail_unique.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/config.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/audit_log.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/email_unique.php"); 
 
 function addUser($conn, $first_name, $last_name, $email, $pass, $usertype, $username, $key, $method, $actor_id) {
     // Check if the email is unique

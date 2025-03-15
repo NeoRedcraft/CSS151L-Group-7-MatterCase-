@@ -1,7 +1,7 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsconfig.php"); 
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsdecrypt.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/config.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php"); 
 
 global $key, $method;
 

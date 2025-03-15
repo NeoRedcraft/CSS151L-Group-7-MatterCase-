@@ -2,9 +2,9 @@
 session_start();
 
 // Include the encryption file
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsencryption.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsdecrypt.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsaudit_log.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/audit_log.php");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];

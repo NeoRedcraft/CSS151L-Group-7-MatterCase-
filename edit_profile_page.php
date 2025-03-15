@@ -1,9 +1,9 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsconfig.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsedit_user.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsaudit_log.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsencryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/config.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/edit_user.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/audit_log.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php");
 
 // Check if the user is logged in
 if (!isset($_SESSION['username'])) {

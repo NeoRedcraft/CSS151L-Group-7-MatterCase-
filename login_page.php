@@ -1,7 +1,7 @@
 
 <?php
 // Include the login logic
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionslogin.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/login.php");
 ?>
 
 <!DOCTYPE html>

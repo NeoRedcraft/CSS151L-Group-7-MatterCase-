@@ -1,7 +1,7 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsconfig.php"); // Include the database connection file
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsdecrypt.php"); // Include the decryption file
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/config.php"); // Include the database connection file
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php"); // Include the decryption file
 
 // Encryption key and method
 $key = 'somebodyoncetoldmetheworldwasgonnarollmeiaintthesharpesttoolintheshed';

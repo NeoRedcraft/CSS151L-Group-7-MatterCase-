@@ -1,6 +1,6 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsdecrypt.php"); // Include decryption function
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php"); // Include decryption function
 
 // Check if the user is logged in
 if (!isset($_SESSION['id'])) {

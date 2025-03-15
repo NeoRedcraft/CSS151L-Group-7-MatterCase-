@@ -2,8 +2,8 @@
 session_start();
 
 // Include the database connection and audit log function
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsencryption.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsaudit_log.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/audit_log.php");
 
 // Database credentials
 $host = 'localhost';

@@ -1,6 +1,6 @@
 <?php
 // Include the encryption file
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsencryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php");
 
 function logAction($conn, $user_id, $action, $key, $method) {
     // Encrypt the action before storing it

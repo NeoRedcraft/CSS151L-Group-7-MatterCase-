@@ -1,8 +1,8 @@
 <?php
 //include_once ("MATTER_CASE_FEnd/html/Add_newusers.html");
 include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/encryption.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/config.php"); // Include the database connection file
-include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/auditlog.php"); // Include the audit log module
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/config.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/auditlog.php"); 
 
 //session check
 session_start();

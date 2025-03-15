@@ -1,110 +1,68 @@
 <?php
 session_start();
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsconfig.php"); // Include the database connection file
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsdecrypt.php"); // Include the decryption file
 
-// Include the encryption file
-include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/encryption.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/decrypt.php");
-$testemail = decryptData("RDFAhvI7KF2y4RH6OPZJZGJLY0pxS2JvNFRPZS82THB3WUYwWVE9PQ==", $key, $method);
-$testpass = decryptData("+lFCT9HtHdx4AwBuhiWSNkhqbWRJRUFCTVgvcHlIQjFKek9BZFE9PQ==", $key, $method);
-//remove this shit later
-echo $testemail;
-echo $testpass;
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $pass = $_POST['pass'];
+// Encryption key and method
+$key = 'somebodyoncetoldmetheworldwasgonnarollmeiaintthesharpesttoolintheshed';
+$method = 'AES-256-CBC';
 
-    // Database credentials
-    $host = 'localhost';
-    $db_username = 'root';
-    $db_pass = '';
-    $database = 'mattercase';
+// Check if the user is logged in (optional, for security)
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php"); // Redirect to login if not logged in
+    exit();
+}
 
-    // Connect to the database
-    $conn = mysqli_connect($host, $db_username, $db_pass, $database);
+// Fetch audit logs from the database
+$query = "SELECT audit_log.*, users.username 
+          FROM audit_log 
+          LEFT JOIN users ON audit_log.user_id = users.id 
+          ORDER BY audit_log.timestamp DESC";
+$result = mysqli_query($conn, $query);
 
-    // Check for errors
-    if (mysqli_connect_errno()) {
-        echo "Failed to connect to MySQL: " . mysqli_connect_error();
-        exit();
-    }
-
-    // Fetch all users from the database
-    $query = "SELECT * FROM users";
-    $result = mysqli_query($conn, $query);
-
-    $login_successful = false;
-
-    // Loop through all users to find a match
-    while ($row = mysqli_fetch_assoc($result)) {
-        // Decrypt the stored username (email) and pass
-        $stored_encrypted_username = $row['email'];
-        $stored_encrypted_pass = $row['pass'];
-
-        $decrypted_username = decryptData($stored_encrypted_username, $key, $method);
-        $decrypted_pass = decryptData($stored_encrypted_pass, $key, $method);
-
-        // Check if the decrypted username and pass match the input
-        if ($username === $decrypted_username && $pass === $decrypted_pass) {
-            $login_successful = true;
-            $_SESSION['username'] = $username;
-            $_SESSION['id'] = $row['id'];
-
-            // Check usertype
-            //0 - admin
-            //1 - partner
-            //2 - lawyer
-            //3 - paralegal
-            //4 - messenger
-            switch($row["usertype"]){
-                case 0:
-                    header('Location: dashboard_admin.php');
-                    exit();
-                    break;
-                case 1:
-                    header('Location: dashboard_partner.php');
-                    exit();
-                    break;
-                case 2:
-                    header('Location: dashboard_lawyer.php');
-                    exit();
-                    break;
-                case 3:
-                    header('Location: dashboard_paralegal.php');
-                    exit();
-                    break;
-                case 4:
-                    header('Location: dashboard_messenger.php');
-                    exit();
-                    break;
-                default:
-                    echo "Invalid user type.";
-                    break;
-            }
-        }
-    }
-
-    if (!$login_successful) {
-        echo "Invalid username or pass.";
-    }
-
-    // Close the database connection
-    mysqli_close($conn);
+if (!$result) {
+    die("Error fetching audit log: " . mysqli_error($conn));
 }
 ?>
 
 <!DOCTYPE html>
-<html>
-<head>  
-    <title>Login</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Log</title>
 </head>
 <body>
-    <h1>Login Now</h1>
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-        <label>Email:</label>
-        <input type="text" name="username"><br><br>
-        <label>Password:</label>
-        <input type="password" name="pass"><br><br>
-        <input type="submit" value="Login"><br><br>
-    </form>
+    <h1>Audit Log</h1>
+    <a href="dashboard_admin.php">Back to Dashboard</a>
+    <br><br>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Action</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($row['id']); ?></td>
+                    <td><?php echo htmlspecialchars($row['user_id']); ?></td>
+                    <td><?php echo htmlspecialchars($row['username'] ?? 'N/A'); ?></td>
+                    <td><?php echo htmlspecialchars(decryptData($row['action'], $key, $method)); ?></td>
+                    <td><?php echo htmlspecialchars($row['timestamp']); ?></td>
+                </tr>
+            <?php endwhile; ?>
+        </tbody>
+    </table>
 </body>
 </html>
+
+<?php
+// Close the database connection
+mysqli_close($conn);
+?>

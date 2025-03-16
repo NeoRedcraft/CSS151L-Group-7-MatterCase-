@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Create database connection using config file
 include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/config.php");
 include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php");
@@ -6,6 +7,7 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php")
 
 // Fetch all users data from database
 $result = mysqli_query($conn, "SELECT * FROM users ORDER BY id DESC");
+$usertype = $_SESSION['usertype'];
 ?>
 
 <html>

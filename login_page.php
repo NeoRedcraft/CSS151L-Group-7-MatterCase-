@@ -19,7 +19,7 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/login.php");
         <div class="login-form">
             <p>Welcome</p>
             <input type="text" name="username" placeholder="Email or phone number">
-            <input type="password" name="password" placeholder="Enter password">
+            <input type="password" name="pass" placeholder="Enter password">
             <button type="submit">Sign in</button>
         </div>
     </div>

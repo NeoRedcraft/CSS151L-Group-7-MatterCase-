@@ -1,9 +1,9 @@
 <?php
 // Include necessary files
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsencryption.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsdecrypt.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsaudit_log.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functionsemail_unique.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/audit_log.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/email_unique.php");
 
 function connectToDatabase() {
     // Database credentials

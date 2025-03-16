@@ -25,54 +25,48 @@ if (isset($_POST['Submit'])) {
     echo $result;
 }
 ?>
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Add Users</title>
+    <link rel="stylesheet" href="add_user_page.css">
 </head>
 <body>
-    <a href="login.php">Home</a>
-    <br/><br/>
 
-    <form action="add_user_page.php" method="post" name="form1">
-        <table width="25%" border="0">
-            <tr> 
-                <td>FirstName</td>
-                <td><input type="text" name="first_name"></td>
-            </tr>
-            <tr> 
-                <td>LastName</td>
-                <td><input type="text" name="last_name"></td>
-            </tr>
-            <tr> 
-                <td>UserName</td>
-                <td><input type="text" name="username"></td>
-            </tr>
-            <tr>
-                <td>User Type</td>
-                <td>
-                    <select name="usertype" id="usertype">
-                        <option value="0">Administrator</option>
-                        <option value="1">Partner</option>
-                        <option value="2">Lawyer</option>
-                        <option value="3">Paralegal</option>
-                        <option value="4">Messenger</option>
-                    </select>
-                </td>
-            </tr>
-            <tr> 
-                <td>Email</td>
-                <td><input type="text" name="email"></td>
-            </tr>
-            <tr> 
-                <td>Password</td>
-                <td><input type="text" name="pass"></td>
-            </tr>
-            <tr> 
-                <td></td>
-                <td><input type="submit" name="Submit" value="Add"></td>
-            </tr>
-        </table>
-    </form>
+    <a href="login.php" class="home-link">Home</a>
+    <img src="img/logo.png" class="logo" alt="">
+    <div class="container">
+        <h2>Add New User</h2>
+
+        <form class="form-container" action="add_user_page.php" method="post">
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" required>
+
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" required>
+
+            <label for="username">User Name</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="usertype">User Type</label>
+            <select name="usertype" id="usertype" required>
+                <option value="0">Administrator</option>
+                <option value="1">Partner</option>
+                <option value="2">Lawyer</option>
+                <option value="3">Paralegal</option>
+                <option value="4">Messenger</option>
+            </select>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="pass" required>
+
+            <button type="submit">Add</button>
+        </form>
+    </div>
+
 </body>
 </html>

@@ -20,7 +20,7 @@ body {
     top: 25%;
     left: 83%;
     transform: translateX(-50%);
-    width: 450px;
+    width: 850px;
     z-index: 1;
 }
 
@@ -29,7 +29,7 @@ body {
     max-width: 800px;
     width: 100%;
     background: #fff;
-    padding: 25px 30px;
+    padding: 55px 40px;
     border-radius: 10px;
     position: relative;
     z-index: 10;

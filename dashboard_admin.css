@@ -1,0 +1,99 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #02f2ff, #113dff);
+    position: relative;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    background: linear-gradient(to bottom, #374151, #1f2937);
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    width: 40%;
+    max-width: 300px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Logo Styling */
+.logo {
+    position: absolute;
+    top: 0%;
+    left: 83%;
+    transform: translateX(-50%);
+    width: 400px;
+    z-index: 1;
+}
+
+
+
+/* Button Styling */
+button {
+    box-shadow:inset 0px -3px 7px 0px #29bbff;
+	background:linear-gradient(to bottom, #2dabf9 5%, #0688fa 100%);
+	background-color:#2dabf9;
+	border-radius:4px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:21px;
+	font-weight:bold;
+	padding:31px 54px;
+	text-decoration:none;
+	text-shadow:5px 6px 9px #a3baff;
+}
+
+
+.buttons-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px; 
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px; 
+}
+
+.action-btn {
+    width: 100%; 
+    text-align: center;
+}
+
+
+/* Logout Button */
+.logout-btn {
+    position: absolute;
+    top: 10px; 
+    left: 10px; 
+    background: linear-gradient(to right, #FF5733, #C70039);
+    padding: 5px 10px; 
+    font-size: 12px;
+    border-radius: 4px;
+    box-shadow: inset 0px -3px 7px 0px #ff7979;
+    cursor: pointer;
+}
+
+.edit-profile-btn {
+    position: relative;
+    top: -35px;
+    background: linear-gradient(to right, #338bff, #00e1ff);
+    margin-left: 28%;
+}
+
+
+button:hover {
+    background: linear-gradient(to right, #0056b3, #003d82);
+    transform: scale(1.025);
+}
+

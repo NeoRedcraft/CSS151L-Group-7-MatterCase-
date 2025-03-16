@@ -88,65 +88,61 @@ if (isset($_POST['update'])) {
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
-<head>	
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
     <title>Edit User Data</title>
+    <link rel="stylesheet" href="edit_profile_page.css">
 </head>
 <body>
-	<a href="<?php
-		// Redirect to the appropriate dashboard based on usertype
-		switch ($usertype) {
-			case 0: // Admin
-				echo 'dashboard_admin.php';
-				break;
-			case 1: // Partner
-				echo 'dashboard_partner.php';
-				break;
-			case 2: // Lawyer
-				echo 'dashboard_lawyer.php';
-				break;
-			case 3: // Paralegal
-				echo 'dashboard_paralegal.php';
-				break;
-			case 4: // Messenger
-				echo 'dashboard_messenger.php';
-				break;
-			default:
-				echo 'login_page.php'; // Fallback to login page
-				break;
-		}
-	?>">Back to Dashboard</a>
-    <br/><br/>
-    
-    <form name="update_user" method="post" action="edit_profile_page.php">
-        <table border="0">
-            <tr> 
-                <td>First Name</td>
-                <td><input type="text" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>"></td>
-            </tr>
-            <tr> 
-                <td>Last Name</td>
-                <td><input type="text" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>"></td>
-            </tr>
-            <tr> 
-                <td>Email</td>
-                <td><input type="text" name="email" value="<?php echo htmlspecialchars($email); ?>"></td>
-            </tr>
-            <tr> 
-                <td>Username</td>
-                <td><input type="text" name="username" value="<?php echo htmlspecialchars($username); ?>"></td>
-            </tr>
-            <tr> 
-                <td>Password</td>
-                <td><input type="text" name="pass" value="<?php echo htmlspecialchars($pass); ?>"></td>
-            </tr>
-            <tr>
-                <td><input type="hidden" name="id" value="<?php echo $edit_user_id; ?>"></td>
-                <td><input type="submit" name="update" value="Update"></td>
-            </tr>
-        </table>
-    </form>
+
+    <a href="<?php
+        switch ($usertype) {
+            case 0: echo 'dashboard_admin.php'; break;
+            case 1: echo 'dashboard_partner.php'; break;
+            case 2: echo 'dashboard_lawyer.php'; break;
+            case 3: echo 'dashboard_paralegal.php'; break;
+            case 4: echo 'dashboard_messenger.php'; break;
+            default: echo 'login_page.php'; break;
+        }
+    ?>" class="back-link">Back to Dashboard</a>
+
+    <div class="container">
+        <img src="img/logo.png" class="logo" alt="Logo">
+        <h2>Edit User Profile</h2>
+
+        <form method="post" action="edit_profile_page.php">
+            <div class="input-box">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" required>
+            </div>
+
+            <div class="input-box">
+                <label for="last_name">Last Name</label>
+                <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" required>
+            </div>
+
+            <div class="input-box">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+            </div>
+
+            <div class="input-box">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
+            </div>
+
+            <div class="input-box">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="pass" placeholder="Enter new password (leave blank to keep current)">
+            </div>
+
+            <input type="hidden" name="id" value="<?php echo $edit_user_id; ?>">
+
+            <button type="submit" name="update">Update Profile</button>
+        </form>
+    </div>
+
 </body>
 </html>

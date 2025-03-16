@@ -63,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Add Matter</title>
+    <link rel="stylesheet" href="add_matter_page.css">
 </head>
 <body>
     <h1>Add New Matter</h1>
@@ -75,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php endif; ?>
 
     <!-- Form to Add a New Matter -->
+    <img src="img/logo.png" alt="" class="logo">
     <form action="add_matter_page.php" method="POST">
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" required><br><br>
@@ -82,13 +84,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label for="description">Description:</label>
         <textarea id="description" name="description" required></textarea><br><br>
 
-        <label for="status">Status:</label>
+      <label for="status">Status:</label>
         <select id="status" name="status" required>
             <option value="Open">Open</option>
             <option value="Closed">Closed</option>
             <option value="Pending">Pending</option>
         </select><br><br>
 
+       
         <button type="submit">Add Matter</button>
     </form>
 

@@ -1,8 +1,7 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php"); 
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/audit_log.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/ITS122L-MatterCase/Functions/decrypt.php"); // Include decryption function
+include_once($_SERVER['DOCUMENT_ROOT'] . "/ITS122L-MatterCase/Functions/encryption.php"); // Include encryption function
 
 // Check if the user is logged in
 if (!isset($_SESSION['id'])) {
@@ -57,9 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->execute()) {
         $client_id = $stmt->insert_id; // Get the ID of the newly inserted client
 
-        // Log the action in the audit log
-        $action = "Added new client, Client ID: $client_id, Client name: $client_name, Related matters IDs: $matter_ids";
-        logAction($conn, $user_id, $action, $key, $method);
         // Insert selected matters into the client_matters table
         if (!empty($matter_ids)) {
             $insert_matters_stmt = $conn->prepare("INSERT INTO client_matters (client_id, matter_id) VALUES (?, ?)");
@@ -88,45 +84,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Client</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matter Case</title>
+    <link rel="stylesheet" href="add_client.css">
 </head>
 <body>
-    <h1>Add New Client</h1>
+    <img src="img/logo.png" alt="Logo" class="logo">
+    
+    <div class="container">
+        <div class="title">Add New Client</div>
+        
+        <?php if (isset($_GET['success'])): ?>
+            <p style="color: green;">Client added successfully!</p>
+        <?php elseif (isset($_GET['error'])): ?>
+            <p style="color: red;">Error adding client. Please try again.</p>
+        <?php endif; ?>
 
-    <!-- Display success or error messages -->
-    <?php if (isset($_GET['success'])): ?>
-        <p style="color: green;">Client added successfully!</p>
-    <?php elseif (isset($_GET['error'])): ?>
-        <p style="color: red;">Failed to add client. Please try again.</p>
-    <?php endif; ?>
-
-    <!-- Form to Add a New Client -->
-    <form action="add_client_page.php" method="POST">
-        <label for="client_name">Client Name:</label>
-        <input type="text" id="client_name" name="client_name" required><br><br>
-
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
-
-        <label for="address">Address:</label>
-        <textarea id="address" name="address" required></textarea><br><br>
-
-        <label for="profile_picture">Profile Picture URL:</label>
-        <input type="text" id="profile_picture" name="profile_picture"><br><br>
-
-        <!-- Multi-select dropdown for matters -->
-        <label for="matter_ids">Select Matters:</label>
-        <select id="matter_ids" name="matter_ids[]" multiple>
-            <?php foreach ($matters as $matter): ?>
-                <option value="<?php echo $matter['matter_id']; ?>">
-                    <?php echo htmlspecialchars($matter['title']); ?>
-                </option>
-            <?php endforeach; ?>
-        </select><br><br>
-
-        <button type="submit">Add Client</button>
-    </form>
-
-    <p><a href="view_clients_page.php">Back to View Clients</a></p>
+        <form action="add_client_page.php" method="POST">
+            <div class="user-details">
+                <div class="input-box">
+                    <span class="details">Full Name</span>
+                    <input type="text" name="client_name" placeholder="Enter Your Name" required>
+                </div>
+                <div class="input-box">
+                    <span class="details">Address</span>
+                    <input type="text" name="address" placeholder="Enter Your Address" required>
+                </div>
+                <div class="input-box">
+                    <span class="details">Email Address</span>
+                    <input type="email" name="email" placeholder="Enter Your Email" required>
+                </div>
+                <div class="profile-upload">
+                    <span class="details">Add Profile</span>
+                    <label for="profile-pic" class="upload-box">
+                        <input type="file" name="profile_picture" id="profile-pic" accept="image/*" hidden>
+                        <span class="upload-text">Upload Photo</span>
+                    </label>
+                </div>
+                <label for="matter_ids">Select Matters:</label>
+                <select id="matter_ids" name="matter_ids[]" multiple>
+                    <?php foreach ($matters as $matter): ?>
+                        <option value="<?php echo $matter['matter_id']; ?>">
+                            <?php echo htmlspecialchars($matter['title']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="button">
+                <input type="submit" value="ADD">
+            </div>
+        </form>
+    </div>
 </body>
 </html>

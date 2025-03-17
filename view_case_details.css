@@ -1,0 +1,87 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Body styling */
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #02f2ff, #113dff);
+    position: relative;
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+    width: 40%;
+    max-width: 500px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Logo Styling */
+.logo {
+    position: absolute;
+    top: 0%;
+    left: 83%;
+    transform: translateX(-50%);
+    width: 400px;
+    z-index: 1;
+}
+
+/* Button Styling */
+.action-btn {
+    display: inline-block;
+    padding: 15px 30px;
+    background: linear-gradient(to bottom, #2dabf9 5%, #0688fa 100%);
+    background-color: #2dabf9;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+    text-shadow: 5px 6px 9px #a3baff;
+    box-shadow: inset 0px -3px 7px 0px #29bbff;
+    margin: 10px 0;
+    width: 100%; /* Make the button take the full width of the container */
+    max-width: 200px; /* Ensure a consistent width */
+    transition: background 0.3s, transform 0.3s;
+    text-align: center; /* Center the text in the button */
+}
+
+.action-btn:hover {
+    background: linear-gradient(to right, #0056b3, #003d82);
+    transform: scale(1.05);
+}
+
+/* Logout Button */
+.logout-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: linear-gradient(to right, #FF5733, #C70039);
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    box-shadow: inset 0px -3px 7px 0px #ff7979;
+    cursor: pointer;
+}
+
+/* Grid for Buttons */
+.buttons-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}

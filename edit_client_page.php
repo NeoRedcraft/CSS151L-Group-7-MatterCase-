@@ -1,128 +1,85 @@
 <?php
-session_start();
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/config.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/audit_log.php");
-
-// Check if the user is logged in
-if (!isset($_SESSION['id'])) {
-    header('Location: login_page.php');
-    exit();
-}
-
-$user_id = $_SESSION['id'];
-$usertype = $_SESSION['usertype'];
-
-// Restrict access to Admins and Partners only
-if ($usertype != 0 && $usertype != 1) {
-    header('Location: view_cases_page.php');
-    exit();
-}
-
-// Connect to the database
-$conn = new mysqli('localhost', 'root', '', 'mattercase');
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Fetch client data to edit
-$client_id = $_GET['client_id'] ?? null;
-if (!$client_id) {
-    echo "Client ID not provided.";
-    exit();
-}
-
-// Fetch client data
-$query = "SELECT * FROM clients WHERE client_id = ?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $client_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$client_data = $result->fetch_assoc();
-
-if (!$client_data) {
-    echo "Client not found.";
-    exit();
-}
-
-// Decrypt client data
-$client_name = decryptData($client_data['client_name'], $key, $method);
-$email = decryptData($client_data['email'], $key, $method);
-$address = decryptData($client_data['address'], $key, $method);
-$profile_picture = decryptData($client_data['profile_picture'], $key, $method);
-
-// Handle form submission
-if (isset($_POST['update'])) {
-    $new_client_name = $_POST['client_name'];
-    $new_email = $_POST['email'];
-    $new_address = $_POST['address'];
-    $new_profile_picture = $_POST['profile_picture'];
-
-    // Check if the new email is unique (if it has changed)
-    if ($new_email !== $email && !isEmailUnique($conn, $new_email, $key, $method)) {
-        echo "Error: Email already exists. Please use a different email address.";
-    } else {
-        // Compare old and new data to log changes
-        $changes = [];
-        if ($new_client_name !== $client_name) {
-            $changes[] = "Client Name: '$client_name' to '$new_client_name'";
-        }
-        if ($new_email !== $email) {
-            $changes[] = "Email: '$email' to '$new_email'";
-        }
-        if ($new_address !== $address) {
-            $changes[] = "Address: '$address' to '$new_address'";
-        }
-        if ($new_profile_picture !== $profile_picture) {
-            $changes[] = "Profile Picture: Updated";
-        }
-
-        // Log changes if any
-        if (!empty($changes)) {
-            $action = "Updated client ID $client_id: " . implode(", ", $changes);
-            logAction($conn, $user_id, $action, $key, $method);
-        }
-
-        // Encrypt new data
-        $encrypted_client_name = encryptData($new_client_name, $key, $method);
-        $encrypted_email = encryptData($new_email, $key, $method);
-        $encrypted_address = encryptData($new_address, $key, $method);
-        $encrypted_profile_picture = encryptData($new_profile_picture, $key, $method);
-
-        // Update the client data in the database
-        $update_query = "
-            UPDATE clients 
-            SET client_name = ?, 
-                email = ?, 
-                address = ?, 
-                profile_picture = ? 
-            WHERE client_id = ?
-        ";
-        $stmt = $conn->prepare($update_query);
-        $stmt->bind_param(
-            "ssssi",
-            $encrypted_client_name,
-            $encrypted_email,
-            $encrypted_address,
-            $encrypted_profile_picture,
-            $client_id
-        );
-
-        if ($stmt->execute()) {
-            echo "Client updated successfully.";
-        } else {
-            echo "Error updating client.";
-        }
-    }
-}
+    include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/edit_client.php"); 
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Edit Client</title>
+    <style>
+        .matter-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .related-matters {
+            margin-bottom: 20px;
+        }
+        .related-matters ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .related-matters li {
+            padding: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+        }
+        .matter-item {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+    <script>
+        // JavaScript to handle adding matters
+        function addMatters() {
+            const selectedMatters = [];
+            document.querySelectorAll('input[name="matter_ids[]"]:checked').forEach((checkbox) => {
+                selectedMatters.push(checkbox.value);
+            });
+
+            if (selectedMatters.length === 0) {
+                alert("Please select at least one matter.");
+                return;
+            }
+
+            selectedMatters.forEach((matterId) => {
+                // Create an entry in the list of selected matters
+                const matterElement = document.createElement('li');
+                matterElement.classList.add('matter-item');
+                matterElement.setAttribute('data-matter-id', matterId);
+
+                const matterTitle = document.getElementById(`matter-title-${matterId}`).textContent;
+
+                matterElement.innerHTML = `
+                    ${matterTitle}
+                    <button type="button" onclick="removeMatter(this)">Remove</button>
+                `;
+                document.getElementById('selected-matters-list').appendChild(matterElement);
+            });
+        }
+
+        // JavaScript to handle removing a matter from the UI
+        function removeMatter(button) {
+            button.parentElement.remove();
+        }
+
+        // JavaScript to filter matters based on search input
+        function filterMatters() {
+            const searchText = document.getElementById('search').value.toLowerCase();
+            const matters = document.querySelectorAll('.matter-list div');
+
+            matters.forEach((matter) => {
+                const matterText = matter.textContent.toLowerCase();
+                if (matterText.includes(searchText)) {
+                    matter.style.display = 'block';
+                } else {
+                    matter.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </head>
 <body>
     <h1>Edit Client</h1>
@@ -144,6 +101,42 @@ if (isset($_POST['update'])) {
             }
         ?>">Back to Dashboard</a>
     </p>
+
+    <!-- Display Related Matters -->
+    <div class="related-matters">
+        <h2>Related Matters</h2>
+        <form method="post" action="edit_client_page.php?client_id=<?php echo $client_id; ?>">
+            <ul id="related-matters-list">
+                <?php
+                // Fetch related matters for the client
+                $query = "
+                    SELECT m.matter_id, m.title 
+                    FROM matters m
+                    JOIN client_matters cm ON m.matter_id = cm.matter_id
+                    WHERE cm.client_id = ?
+                ";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("i", $client_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        // Decrypt the matter title
+                        $decrypted_title = decryptData($row['title'], $key, $method);
+                        echo "<li class='matter-item' data-matter-id='" . htmlspecialchars($row['matter_id']) . "'>
+                            <input type='checkbox' name='remove_matter_ids[]' value='" . htmlspecialchars($row['matter_id']) . "'> 
+                            <span id='matter-title-" . htmlspecialchars($row['matter_id']) . "'>" . htmlspecialchars($decrypted_title) . "</span>
+                            <button type='button' onclick='removeMatter(this)'>Remove</button>
+                        </li>";
+                    }
+                } else {
+                    echo "No related matters found.";
+                }
+                ?>
+            </ul>
+        </form>
+    </div>
 
     <!-- Edit Client Form -->
     <form name="update_client" method="post" action="edit_client_page.php?client_id=<?php echo $client_id; ?>">
@@ -170,5 +163,30 @@ if (isset($_POST['update'])) {
             </tr>
         </table>
     </form>
+
+    <!-- Searchable List of All Matters -->
+    <h2>All Matters</h2>
+    <input type="text" id="search" placeholder="Search matters..." onkeyup="filterMatters()">
+    <div class="matter-list">
+        <?php
+        // Fetch all matters
+        $query = "SELECT matter_id, title FROM matters";
+        $result = $conn->query($query);
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                // Decrypt the matter title
+                $decrypted_title = decryptData($row['title'], $key, $method);
+                echo "<div>
+                    <input type='checkbox' name='matter_ids[]' value='" . htmlspecialchars($row['matter_id']) . "' id='matter-id-" . htmlspecialchars($row['matter_id']) . "'>
+                    <span id='matter-title-" . htmlspecialchars($row['matter_id']) . "'>" . htmlspecialchars($decrypted_title) . "</span>
+                </div>";
+            }
+        } else {
+            echo "No matters found.";
+        }
+        ?>
+    </div>
+    <p><button onclick="addMatters()">Add Selected Matters</button></p>
 </body>
 </html>

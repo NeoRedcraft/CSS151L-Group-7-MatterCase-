@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </select><br><br>
 
        
-        <button type="submit">Add Matter</button>
+        <button type="submit" name="submit">Add Matter</button>
     </form>
 
     <p><a href="view_matters_page.php">Back to View Matters</a></p>

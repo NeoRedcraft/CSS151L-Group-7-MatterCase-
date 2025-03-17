@@ -134,8 +134,8 @@ if (isset($_POST['update'])) {
             </div>
 
             <div class="input-box">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="pass" placeholder="Enter new password (leave blank to keep current)">
+                <label for="pass">Password</label>
+                <td><input type="text" name="pass" value="<?php echo htmlspecialchars($pass); ?>"></td>
             </div>
 
             <input type="hidden" name="id" value="<?php echo $edit_user_id; ?>">

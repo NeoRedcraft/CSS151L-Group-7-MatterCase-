@@ -58,6 +58,7 @@ $case_id = $_GET['case_id']; // Get the case ID from the URL
 <head>
     <meta charset="UTF-8">
     <title>Add Case Fee</title>
+    <link rel="stylesheet" href="add_case_fee_page.css">
 </head>
 <body>
     <h1>Add Case Fee</h1>

@@ -57,10 +57,12 @@ $case_id = $_GET['case_id']; // Get the case ID from the URL
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Case Fee</title>
     <link rel="stylesheet" href="add_case_fee_page.css">
 </head>
 <body>
+    <img src="img/logo.png" alt="Logo" class="logo">
     <h1>Add Case Fee</h1>
 
     <!-- Display success or error messages -->

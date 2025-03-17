@@ -13,6 +13,7 @@ body {
     justify-content: center;
     align-items: center;
     background: linear-gradient(135deg, #02f2ff, #113dff);
+<<<<<<< HEAD
 }
 
 .container {
@@ -97,6 +98,11 @@ p a:hover {
 }
 
 
+=======
+    position: relative;
+}
+
+>>>>>>> b8ddd1810aa4c524bbee0dfef00e3b197fec4db4
 .logo {
     position: absolute;
     top: 10%;
@@ -170,4 +176,8 @@ p a {
 
 p a:hover {
     text-decoration: underline;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> b8ddd1810aa4c524bbee0dfef00e3b197fec4db4

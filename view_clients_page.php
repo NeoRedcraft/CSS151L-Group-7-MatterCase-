@@ -1,9 +1,8 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php"); // Include decryption function
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php"); // Include encryption function
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php");
 
-// Check if the user is logged in
 if (!isset($_SESSION['id'])) {
     header('Location: login_page.php');
     exit();
@@ -12,19 +11,16 @@ if (!isset($_SESSION['id'])) {
 $user_id = $_SESSION['id'];
 $usertype = $_SESSION['usertype'];
 
-// Restrict access to Paralegals and Messengers
 if ($usertype == 3 || $usertype == 4) {
     header('Location: view_cases_page.php');
     exit();
 }
 
-// Connect to the database
 $conn = new mysqli('localhost', 'root', '', 'mattercase');
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Fetch all clients
 $clientQuery = "SELECT * FROM clients";
 $clientResult = $conn->query($clientQuery);
 
@@ -34,7 +30,6 @@ if (!$clientResult) {
 
 $clients = $clientResult->fetch_all(MYSQLI_ASSOC);
 
-// Fetch all client-matter relationships
 $matterQuery = "
     SELECT cm.client_id, m.title 
     FROM client_matters cm
@@ -47,8 +42,6 @@ if (!$matterResult) {
 }
 
 $matters = $matterResult->fetch_all(MYSQLI_ASSOC);
-
-// Organize matters by client_id
 $mattersByClient = [];
 foreach ($matters as $matter) {
     $clientId = $matter['client_id'];
@@ -64,101 +57,66 @@ foreach ($matters as $matter) {
 <head>
     <meta charset="UTF-8">
     <title>View Clients</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-    </style>
+    <link rel="stylesheet" href="view_clients_page.css">
 </head>
 <body>
-    <h1>View Clients</h1>
-
-    <!-- Back to Dashboard Button -->
-    <p>
-        <a href="<?php
-            // Redirect to the appropriate dashboard based on usertype
-            switch ($usertype) {
-                case 0: // Admin
-                    echo 'dashboard_admin.php';
-                    break;
-                case 1: // Partner
-                    echo 'dashboard_partner.php';
-                    break;
-                case 2: // Lawyer
-                    echo 'dashboard_lawyer.php';
-                    break;
-                case 3: // Paralegal
-                    echo 'dashboard_paralegal.php';
-                    break;
-                case 4: // Messenger
-                    echo 'dashboard_messenger.php';
-                    break;
-                default:
-                    echo 'login_page.php'; // Fallback to login page
-                    break;
-            }
-        ?>">Back to Dashboard</a>
-    </p>
-
-    <!-- Link to Add Clients Page (Only for Admins and Partners) -->
-    <?php if ($usertype == 0 || $usertype == 1): ?>
-        <p><a href="add_client_page.php">Add New Client</a></p>
-    <?php endif; ?>
-
-    <!-- Display Existing Clients -->
-    <h2>Existing Clients</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Client ID</th>
-                <th>Client Name</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Profile Picture</th>
-                <th>Created At</th>
-                <th>Matters</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($clients as $client): ?>
+    <img src="img/logo.png" alt="Logo" class="logo">
+    <div class="container">
+        <h1>View Clients</h1>
+        <p>
+            <a href="<?php
+                switch ($usertype) {
+                    case 0: echo 'dashboard_admin.php'; break;
+                    case 1: echo 'dashboard_partner.php'; break;
+                    case 2: echo 'dashboard_lawyer.php'; break;
+                    default: echo 'login_page.php';
+                }
+            ?>" class="btn back-btn">Back to Dashboard</a>
+        </p>
+        <?php if ($usertype == 0 || $usertype == 1): ?>
+            <p><a href="add_client_page.php" class="btn add-btn">Add New Client</a></p>
+        <?php endif; ?>
+        <h2>Existing Clients</h2>
+        <table>
+            <thead>
                 <tr>
-                    <td><?php echo htmlspecialchars($client['client_id']); ?></td>
-                    <td><?php echo htmlspecialchars(decryptData($client['client_name'], $key, $method)); ?></td>
-                    <td><?php echo htmlspecialchars(decryptData($client['email'], $key, $method)); ?></td>
-                    <td><?php echo htmlspecialchars(decryptData($client['address'], $key, $method)); ?></td>
-                    <td><?php echo htmlspecialchars(decryptData($client['profile_picture'], $key, $method)); ?></td>
-                    <td><?php echo htmlspecialchars($client['created_at']); ?></td>
-                    <td>
-                        <?php
-                        // Get matters for this client
-                        $clientId = $client['client_id'];
-                        $clientMatters = $mattersByClient[$clientId] ?? [];
-                        $decryptedMatters = array_map(function ($matter) use ($key, $method) {
-                            return decryptData($matter, $key, $method);
-                        }, $clientMatters);
-                        echo htmlspecialchars(implode(', ', $decryptedMatters) ?: 'No matters assigned');
-                        ?>
-                    </td>
-                    <td>
-                        <!-- View Client Details Link -->
-                        <a href="view_cases_page.php?client_id=<?php echo $client['client_id']; ?>">View Details</a>
-                        <!-- Edit Client Link (Only for Admins and Partners) -->
-                        <?php if ($usertype == 0 || $usertype == 1): ?>
-                            | <a href="edit_client_page.php?client_id=<?php echo $client['client_id']; ?>">Edit</a>
-                        <?php endif; ?>
-                    </td>
+                    <th>Client ID</th>
+                    <th>Client Name</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Profile Picture</th>
+                    <th>Created At</th>
+                    <th>Matters</th>
+                    <th>Action</th>
                 </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php foreach ($clients as $client): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($client['client_id']); ?></td>
+                        <td><?php echo htmlspecialchars(decryptData($client['client_name'], $key, $method)); ?></td>
+                        <td><?php echo htmlspecialchars(decryptData($client['email'], $key, $method)); ?></td>
+                        <td><?php echo htmlspecialchars(decryptData($client['address'], $key, $method)); ?></td>
+                        <td><img src="<?php echo htmlspecialchars(decryptData($client['profile_picture'], $key, $method)); ?>" alt="Profile" width="50"></td>
+                        <td><?php echo htmlspecialchars($client['created_at']); ?></td>
+                        <td>
+                            <?php
+                            $clientId = $client['client_id'];
+                            $clientMatters = $mattersByClient[$clientId] ?? [];
+                            $decryptedMatters = array_map(fn($m) => decryptData($m, $key, $method), $clientMatters);
+                            echo htmlspecialchars(implode(', ', $decryptedMatters) ?: 'No matters assigned');
+                            ?>
+                        </td>
+                        <td>
+                            <a href="view_cases_page.php?client_id=<?php echo $client['client_id']; ?>" class="edit-btn">View Details</a>
+                            <?php if ($usertype == 0 || $usertype == 1): ?>
+                                | <a href="edit_client_page.php?client_id=<?php echo $client['client_id']; ?>" class="edit-btn">Edit</a>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

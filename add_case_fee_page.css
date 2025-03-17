@@ -1,4 +1,6 @@
+
 /* Reset default styles */
+
 * {
     margin: 0;
     padding: 0;
@@ -99,4 +101,91 @@ p a:hover {
 
 .error {
     color: red;
+}
+
+
+.logo {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    z-index: 1;
+}
+h1 {
+    color: #333; /* Darker text for contrast */
+}
+
+/* Form container styling */
+form {
+    background: #fff;
+    padding: 20px;
+    max-width: 400px;
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Label styling */
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+/* Input, textarea, and select field styling */
+input, textarea, select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+/* Textarea specific styling */
+textarea {
+    height: 80px;
+    resize: vertical; /* Allows vertical resizing */
+}
+
+/* Submit button styling */
+button {
+    background-color: #28a745; /* Green button for action emphasis */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Success and error message styling */
+p {
+    font-weight: bold;
+}
+
+p[style*='color: green'] {
+    color: green;
+}
+
+p[style*='color: red'] {
+    color: red;
+}
+
+/* Back link styling */
+p a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+p a:hover {
+    text-decoration: underline;
 }

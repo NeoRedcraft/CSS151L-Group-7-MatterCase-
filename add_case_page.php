@@ -65,9 +65,12 @@ $matters = $conn->query("SELECT matter_id, title FROM matters");
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Case</title>
+    <link rel="stylesheet" href="add_case_page.css">
 </head>
 <body>
+    <img src="img/logo.png" alt="Logo" class="logo">
     <h1>Add New Case</h1>
 
     <!-- Display success or error messages -->

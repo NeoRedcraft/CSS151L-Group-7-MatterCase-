@@ -52,78 +52,40 @@ foreach ($data as &$row) {
 <html lang="en">
 <head>
     <title>Dashboard</title>
+    <link rel="stylesheet" href="view_matters_page.css">
 </head>
-<body class="bg-gray-900 text-white">
-    <div class="min-h-screen flex flex-col">
-        <!-- Top Bar -->
-        <div class="bg-gray-700 text-gray-300 px-6 py-3 flex justify-between items-center">
-            <span class="text-lg">Client <span class="text-green-400">Matters</span></span>
-            <a href="logout.php"><button class="text-gray-300">Logout</button></a>
-            <a href="<?php
-            // Redirect to the appropriate dashboard based on usertype
-            switch ($usertype) {
-                case 0: // Admin
-                    echo 'dashboard_admin.php';
-                    break;
-                case 1: // Partner
-                    echo 'dashboard_partner.php';
-                    break;
-                case 2: // Lawyer
-                    echo 'dashboard_lawyer.php';
-                    break;
-                case 3: // Paralegal
-                    echo 'dashboard_paralegal.php';
-                    break;
-                case 4: // Messenger
-                    echo 'dashboard_messenger.php';
-                    break;
-                default:
-                    echo 'login_page.php'; // Fallback to login page
-                    break;
-            }
-        ?>"><button class="text-gray-300">Dashboard</button></a>
+<body>
+    <div class="container">
+        <span class="logo">Client <span>Matters</span></span>
+        <div>
+            <a href="logout.php" class="btn back-btn">Logout</a>
+            <a href="dashboard.php" class="btn back-btn">Dashboard</a>
         </div>
+    </div>
 
-        <!-- Main Content -->
-        <div class="flex-grow flex justify-center mt-2">
-            <div class="bg-gradient-to-b from-gray-700 to-gray-900 text-center rounded-lg p-8 shadow-lg w-[90%]">
-            <?php if ($usertype == 0 || $usertype == 1): ?>
-        <a href="add_matter_page.php"><button class="bg-yellow-300 text-gray-900 font-semibold py-3 rounded-lg shadow-md w-full h-12">Add New Matter</button></a>
-    <?php endif; ?>
-            <table width="90%">
-        <thead>
-            <tr>
-                <?php if (!empty($data)): ?>
-                    <?php foreach ($data[0] as $key => $value): ?>
-                        <th><?php echo htmlspecialchars($key); ?></th>
+    <div class="container">
+        <div>
+            <a href="add_matter_page.php" class="btn add-btn">Add New Matter</a>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Edit Matter</th>
+                        <th>View Cases</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($data as $row): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['title']); ?></td>
+                        <td><?php echo htmlspecialchars($row['description']); ?></td>
+                        <td><a href="edit_matter_page.php?matter_id=<?php echo $row['matter_id']; ?>" class="edit-btn">Edit</a></td>
+                        <td><a href="view_cases_page.php?matter_id=<?php echo $row['matter_id']; ?>" class="edit-btn">View Cases</a></td>
+                    </tr>
                     <?php endforeach; ?>
-                <?php endif; ?>
-                <th>Edit Matter</th>
-                <th>View Cases</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($data as $row): ?>
-                <tr>
-                    <?php foreach ($row as $key => $value): ?>
-                        <td>
-                            <?php 
-                            // Display decrypted title and description
-                            echo htmlspecialchars($value);
-                            ?>
-                        </td>
-                    <?php endforeach; ?>
-                    <td>
-                        <a href="edit_matter_page.php?matter_id=<?php echo $row['matter_id']; ?>">Edit</a>
-                    </td>
-                    <td>
-                        <a href="view_cases_page.php?matter_id=<?php echo $row['matter_id']; ?>">View Cases</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-            </div>
+                </tbody>
+            </table>
         </div>
     </div>
 </body>

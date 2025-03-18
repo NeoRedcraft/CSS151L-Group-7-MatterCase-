@@ -3,95 +3,22 @@ session_start();
 include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/config.php");
 include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/encryption.php");
 include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/decrypt.php");
-include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/audit_log.php"); 
-include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/email_unique.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/audit_log.php");
+include_once($_SERVER['DOCUMENT_ROOT'] . "/Mattercase/Functions/email_unique.php");
 
-// Check if form is submitted for user update
-if (isset($_POST['update'])) {
-    $id = $_POST['id'];
-
-    // Fetch the old user data
-    $result = mysqli_query($conn, "SELECT * FROM users WHERE id=$id");
-    if ($result && mysqli_num_rows($result) > 0) {
-        $old_data = mysqli_fetch_assoc($result);
-
-        // Decrypt the old data
-        $old_first_name = decryptData($old_data['first_name'], $key, $method);
-        $old_last_name = decryptData($old_data['last_name'], $key, $method);
-        $old_email = decryptData($old_data['email'], $key, $method);
-        $old_pass = decryptData($old_data['pass'], $key, $method);
-        $old_username = $old_data['username']; // Username is not encrypted
-    } else {
-        echo "User not found.";
-        exit();
-    }
-
-    // Retrieve and sanitize new form data
-    $new_first_name = $_POST['first_name'];
-    $new_last_name = $_POST['last_name'];
-    $new_email = $_POST['email'];
-    $new_username = $_POST['username'];
-    $new_pass = $_POST['pass'];
-    if (!isEmailUnique($conn, $email, $key, $method)) {
-        echo "Error: Email already exists. Please use a different email address.";
-    } else {
-        // Encrypt the new data
-        $encrypted_first_name = encryptData($new_first_name, $key, $method);
-        $encrypted_last_name = encryptData($new_last_name, $key, $method);
-        $encrypted_email = encryptData($new_email, $key, $method);
-        $encrypted_pass = encryptData($new_pass, $key, $method);
-
-        // Compare old and new data to log changes
-        $changes = [];
-        if ($new_first_name !== $old_first_name) {
-            $changes[] = "First Name: Updated";
-        }
-        if ($new_last_name !== $old_last_name) {
-            $changes[] = "Last Name: Updated";
-        }
-        if ($new_email !== $old_email) {
-            $changes[] = "Email: Updated";
-        }
-        if ($new_username !== $old_username) {
-            $changes[] = "Username: '$old_username' -> '$new_username'";
-        }
-        if ($new_pass !== $old_pass) {
-            $changes[] = "Password: Updated"; 
-        }
-
-        // Log changes if any
-        if (!empty($changes)) {
-            $action = "Updated user ID $id: " . implode(", ", $changes);
-            logAction($conn, $_SESSION['id'], $action); 
-        }
-
-        // Update the user data in the database
-        $stmt = $conn->prepare("UPDATE users SET first_name=?, last_name=?, email=?, username=?, pass=? WHERE id=?");
-        if ($stmt === false) {
-            die("Prepare failed: " . $conn->error);
-        }
-
-        $stmt->bind_param("sssssi", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $new_username, $encrypted_pass, $id);
-
-        if ($stmt->execute()) {
-            header("Location: viewusers.php");
-            exit();
-        } else {
-            echo "Error updating record: " . $stmt->error;
-        }
-
-        $stmt->close();
-    }
+// Check if ID is provided in the URL
+if (!isset($_GET['id'])) {
+    echo "User ID not provided.";
+    exit();
 }
 
-// Display selected user data based on id
 $id = $_GET['id'];
 
-// Fetch user data based on id
+// Fetch user data based on ID
 $result = mysqli_query($conn, "SELECT * FROM users WHERE id=$id");
 
 if ($result && mysqli_num_rows($result) > 0) {
-    $user_data = mysqli_fetch_array($result);
+    $user_data = mysqli_fetch_assoc($result);
 
     // Decrypt the data
     $first_name = decryptData($user_data['first_name'], $key, $method);
@@ -103,43 +30,92 @@ if ($result && mysqli_num_rows($result) > 0) {
     echo "User not found.";
     exit();
 }
+
+// Handle form submission
+if (isset($_POST['update'])) {
+    $new_first_name = $_POST['first_name'];
+    $new_last_name = $_POST['last_name'];
+    $new_email = $_POST['email'];
+    $new_username = $_POST['username'];
+    $new_pass = $_POST['pass'];
+
+    // Check if email is unique
+    if (!isEmailUnique($conn, $new_email, $key, $method)) {
+        echo "Error: Email already exists. Please use a different email address.";
+    } else {
+        // Encrypt new data
+        $encrypted_first_name = encryptData($new_first_name, $key, $method);
+        $encrypted_last_name = encryptData($new_last_name, $key, $method);
+        $encrypted_email = encryptData($new_email, $key, $method);
+        $encrypted_pass = encryptData($new_pass, $key, $method);
+
+        // Log changes
+        $changes = [];
+        if ($new_first_name !== $first_name) $changes[] = "First Name updated";
+        if ($new_last_name !== $last_name) $changes[] = "Last Name updated";
+        if ($new_email !== $email) $changes[] = "Email updated";
+        if ($new_username !== $username) $changes[] = "Username changed from '$username' to '$new_username'";
+        if ($new_pass !== $pass) $changes[] = "Password updated";
+
+        if (!empty($changes)) {
+            $action = "Updated user ID $id: " . implode(", ", $changes);
+            logAction($conn, $_SESSION['id'], $action);
+        }
+
+        // Update the database
+        $stmt = $conn->prepare("UPDATE users SET first_name=?, last_name=?, email=?, username=?, pass=? WHERE id=?");
+        $stmt->bind_param("sssssi", $encrypted_first_name, $encrypted_last_name, $encrypted_email, $new_username, $encrypted_pass, $id);
+
+        if ($stmt->execute()) {
+            header("Location: view_users_admin.php");
+            exit();
+        } else {
+            echo "Error updating record: " . $stmt->error;
+        }
+
+        $stmt->close();
+    }
+}
 ?>
 
-<html>
-<head>	
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit User Data</title>
+    <link rel="stylesheet" href="edit_user_admin.css">
 </head>
 <body>
-    <a href="view_users_admin.php">Home</a>
-    <br/><br/>
-    
-    <form name="update_user" method="post" action="edit.php">
-        <table border="0">
-            <tr> 
-                <td>First Name</td>
-                <td><input type="text" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>"></td>
-            </tr>
-            <tr> 
-                <td>Last Name</td>
-                <td><input type="text" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>"></td>
-            </tr>
-            <tr> 
-                <td>Email</td>
-                <td><input type="text" name="email" value="<?php echo htmlspecialchars($email); ?>"></td>
-            </tr>
-            <tr> 
-                <td>Username</td>
-                <td><input type="text" name="username" value="<?php echo htmlspecialchars($username); ?>"></td>
-            </tr>
-            <tr> 
-                <td>Password</td>
-                <td><input type="text" name="pass" value="<?php echo htmlspecialchars($pass); ?>"></td>
-            </tr>
-            <tr>
-                <td><input type="hidden" name="id" value="<?php echo $_GET['id']; ?>"></td>
-                <td><input type="submit" name="update" value="Update"></td>
-            </tr>
-        </table>
-    </form>
+
+    <!-- Home Link -->
+    <a href="view_users_admin.php" class="home-link">Home</a>
+    <img src="img/logo.png" class="logo" alt="Logo">
+
+    <!-- Form Container -->
+    <div class="container">
+        <h2>Edit User Data</h2>
+        <form name="update_user" method="post" action="edit_user.php?id=<?php echo $id; ?>" class="form-container">
+            
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" required>
+
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
+
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" value="<?php echo htmlspecialchars($username); ?>" required>
+
+            <label for="pass">Password</label>
+            <input type="password" id="pass" name="pass" value="<?php echo htmlspecialchars($pass); ?>" required>
+
+            <input type="hidden" name="id" value="<?php echo $id; ?>">
+            <button type="submit" name="update">Update</button>
+        </form>
+    </div>
+
 </body>
 </html>

@@ -1,53 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>View Users</title>
-    <link rel="stylesheet" href="view_users_admin.css">
+    <meta charset="UTF-8">
+    <title>Edit Case Update</title>
+    <link rel="stylesheet" href="edit_case_update_page.css"> <!-- Link to external CSS file -->
 </head>
 <body>
-    <img src="img/logo.png" class="logo">
+    <a href="dashboard.php" class="back-link">Back to Dashboard</a>
+    <img src="img/logo.png" class="logo" alt="">
+
     <div class="container">
-        <h1>View Users</h1>
-        <form method="POST" action="add_user_page.php">
-            <input type="submit" name="submit" value="Add New User" class="btn add-btn"> <br /><br />
+        <h2>Edit Case Update</h2>
+
+        <!-- Display success or error messages -->
+        <p id="successMessage" style="color: green; display: none;">Case update updated successfully!</p>
+        <p id="errorMessage" style="color: red; display: none;">Failed to update case update. Please try again.</p>
+
+        <!-- Form to Edit a Case Update -->
+        <form action="edit_case_update_page.php" method="POST">
+            <div class="input-box">
+                <label for="update_text">Update Text:</label>
+                <textarea id="update_text" name="update_text" required></textarea>
+            </div>
+
+            <button type="submit">Update</button>
         </form>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Firstname</th> 
-                    <th>Lastname</th> 
-                    <th>Username</th> 
-                    <th>Email</th> 
-                    <th>Operations</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>John</td>
-                    <td>Doe</td>
-                    <td>johndoe</td>
-                    <td>johndoe@example.com</td>    
-                    <td>
-                        <a href='edit_profile_page.php?id=1' class="edit-btn">Edit</a> | 
-                        <a href='delete_user.php?id=1' class="edit-btn">Delete</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Jane</td>
-                    <td>Smith</td>
-                    <td>janesmith</td>
-                    <td>janesmith@example.com</td>    
-                    <td>
-                        <a href='edit_profile_page.php?id=2' class="edit-btn">Edit</a> | 
-                        <a href='delete_user.php?id=2' class="edit-btn">Delete</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        
-        <a href="dashboard_admin.php" class="btn back-btn">Back to Dashboard</a>
-        <a href="logout.php" class="btn back-btn">Log out</a>
+        <!-- Back to Case Details Button -->
+        <a href="view_case_details.php" class="back-button">Back to Case Details</a>
     </div>
 </body>
 </html>

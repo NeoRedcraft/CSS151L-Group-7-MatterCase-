@@ -58,25 +58,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Edit Case Update</title>
+    <link rel="stylesheet" href="edit_case_update_page.css"> <!-- Link to external CSS file -->
 </head>
 <body>
-    <h1>Edit Case Update</h1>
+    <a href="dashboard.php" class="back-link">Back to Dashboard</a>
+    <img src="img/logo.png" class="logo" alt="">
 
-    <!-- Display success or error messages -->
-    <?php if (isset($_GET['success'])): ?>
-        <p style="color: green;">Case update updated successfully!</p>
-    <?php elseif (isset($_GET['error'])): ?>
-        <p style="color: red;">Failed to update case update. Please try again.</p>
-    <?php endif; ?>
+    <div class="container">
+        <h2>Edit Case Update</h2>
 
-    <!-- Form to Edit a Case Update -->
-    <form action="edit_case_update_page.php?update_id=<?php echo $update_id; ?>" method="POST">
-        <label for="update_text">Update Text:</label>
-        <textarea id="update_text" name="update_text" required><?php echo htmlspecialchars($update['update_text']); ?></textarea><br><br>
+        <!-- Display success or error messages -->
+        <?php if (isset($_GET['success'])): ?>
+            <p id="successMessage" style="color: green;">Case update updated successfully!</p>
+        <?php elseif (isset($_GET['error'])): ?>
+            <p id="errorMessage" style="color: red;">Failed to update case update. Please try again.</p>
+        <?php endif; ?>
 
-        <button type="submit">Update</button>
-    </form>
+        <!-- Form to Edit a Case Update -->
+        <form action="edit_case_update_page.php?update_id=<?php echo $update_id; ?>" method="POST">
+            <div class="input-box">
+                <label for="update_text">Update Text:</label>
+                <textarea id="update_text" name="update_text" required><?php echo htmlspecialchars($update['update_text']); ?></textarea>
+            </div>
 
-    <p><a href="view_case_details.php?case_id=<?php echo $update['case_id']; ?>">Back to Case Details</a></p>
+            <button type="submit">Update</button>
+        </form>
+
+        <!-- Back to Case Details Button -->
+        <a href="view_case_details.php?case_id=<?php echo $update['case_id']; ?>" class="back-button">Back to Case Details</a>
+    </div>
 </body>
 </html>

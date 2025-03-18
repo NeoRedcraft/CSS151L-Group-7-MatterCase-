@@ -52,8 +52,22 @@ $email = decryptData($client_data['email'], $key, $method);
 $address = decryptData($client_data['address'], $key, $method);
 $profile_picture = decryptData($client_data['profile_picture'], $key, $method);
 
+// Initialize $relatedMatterIds as an empty array
+$relatedMatterIds = [];
+
+// Fetch related matters for the client
+$query = "SELECT matter_id FROM client_matters WHERE client_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $client_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+while ($row = $result->fetch_assoc()) {
+    $relatedMatterIds[] = $row['matter_id'];
+}
+
 // Handle form submission for updating client data
-if (isset($_POST['update'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     $new_client_name = $_POST['client_name'];
     $new_email = $_POST['email'];
     $new_address = $_POST['address'];
@@ -85,35 +99,22 @@ if (isset($_POST['update'])) {
     );
 
     if ($stmt->execute()) {
-        echo "Client updated successfully.";
-    } else {
-        echo "Error updating client.";
-    }
-
-    // Compare old and new data to log changes
-    $changes = [];
-    if ($new_client_name !== $client_name) {
-        $changes[] = "Client Name: '$client_name' to '$new_client_name'";
-    }
-    if ($new_email !== $email) {
-        $changes[] = "Email: '$email' to '$new_email'";
-    }
-    if ($new_address !== $address) {
-        $changes[] = "Address: '$address' to '$new_address'";
-    }
-    if ($new_profile_picture !== $profile_picture) {
-        $changes[] = "Profile Picture: Updated";
-    }
-
-    // Log changes if any
-    if (!empty($changes)) {
-        $action = "Updated client ID $client_id: " . implode(", ", $changes);
+        // Log the update
+        $action = "Updated client ID $client_id";
         logAction($conn, $user_id, $action, $key, $method);
+
+        // Redirect with success message
+        header("Location: edit_client_page.php?client_id=$client_id&success=1");
+        exit();
+    } else {
+        // Redirect with error message
+        header("Location: edit_client_page.php?client_id=$client_id&error=1");
+        exit();
     }
 }
 
 // Handle adding related matters
-if (isset($_POST['add_matters'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_matters'])) {
     if (!empty($_POST['matter_ids'])) {
         foreach ($_POST['matter_ids'] as $matter_id) {
             // Check if the matter is already related to the client
@@ -135,18 +136,24 @@ if (isset($_POST['add_matters'])) {
                     $action = "Added matter '$matter_title' (ID: $matter_id) to client ID $client_id";
                     logAction($conn, $user_id, $action, $key, $method);
                 } else {
-                    echo "Error adding matter ID $matter_id.";
+                    // Redirect with error message
+                    header("Location: edit_client_page.php?client_id=$client_id&error=1");
+                    exit();
                 }
             }
         }
-        echo "Selected matters added successfully.";
+        // Redirect with success message
+        header("Location: edit_client_page.php?client_id=$client_id&success=1");
+        exit();
     } else {
-        echo "No matters selected.";
+        // Redirect with error message
+        header("Location: edit_client_page.php?client_id=$client_id&error=2");
+        exit();
     }
 }
 
 // Handle removing related matters
-if (isset($_POST['remove_matters'])) {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['remove_matters'])) {
     if (!empty($_POST['remove_matter_ids'])) {
         foreach ($_POST['remove_matter_ids'] as $matter_id) {
             // Remove the matter from the client
@@ -160,17 +167,24 @@ if (isset($_POST['remove_matters'])) {
                 $action = "Removed matter '$matter_title' (ID: $matter_id) from client ID $client_id";
                 logAction($conn, $user_id, $action, $key, $method);
             } else {
-                echo "Error removing matter ID $matter_id.";
+                // Redirect with error message
+                header("Location: edit_client_page.php?client_id=$client_id&error=1");
+                exit();
             }
         }
-        echo "Selected matters removed successfully.";
+        // Redirect with success message
+        header("Location: edit_client_page.php?client_id=$client_id&success=1");
+        exit();
     } else {
-        echo "No matters selected for removal.";
+        // Redirect with error message
+        header("Location: edit_client_page.php?client_id=$client_id&error=2");
+        exit();
     }
 }
 
 // Function to fetch matter title based on matter ID
 function getMatterTitle($conn, $matter_id) {
+    global $key, $method;
     $query = "SELECT title FROM matters WHERE matter_id = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $matter_id);
@@ -182,6 +196,4 @@ function getMatterTitle($conn, $matter_id) {
     }
     return null;
 }
-
 ?>
-

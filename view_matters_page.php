@@ -39,19 +39,23 @@ if ($usertype == 0 || $usertype == 1) {
 }
 
 $result = $conn->query($query);
-$data = $result->fetch_all(MYSQLI_ASSOC);
+if (!$result) {
+    die("Query failed: " . $conn->error);
+}
+
+$matters = $result->fetch_all(MYSQLI_ASSOC);
 
 // Decrypt the title and description fields
-foreach ($data as &$row) {
-    $row['title'] = decryptData($row['title'], $key, $method);
-    $row['description'] = decryptData($row['description'], $key, $method);
+foreach ($matters as &$matter) {
+    $matter['title'] = decryptData($matter['title'], $key, $method);
+    $matter['description'] = decryptData($matter['description'], $key, $method);
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Dashboard</title>
+    <title>Matters Dashboard</title>
     <link rel="stylesheet" href="view_matters_page.css">
 </head>
 <body>
@@ -63,29 +67,43 @@ foreach ($data as &$row) {
         </div>
     </div>
 
-    <div class="container">
-        <div>
-            <a href="add_matter_page.php" class="btn add-btn">Add New Matter</a>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Description</th>
-                        <th>Edit Matter</th>
-                        <th>View Cases</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($data as $row): ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($row['title']); ?></td>
-                        <td><?php echo htmlspecialchars($row['description']); ?></td>
-                        <td><a href="edit_matter_page.php?matter_id=<?php echo $row['matter_id']; ?>" class="edit-btn">Edit</a></td>
-                        <td><a href="view_cases_page.php?matter_id=<?php echo $row['matter_id']; ?>" class="edit-btn">View Cases</a></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+        <!-- Main Content -->
+        <div class="flex-grow flex justify-center mt-2">
+            <div class="bg-gradient-to-b from-gray-700 to-gray-900 text-center rounded-lg p-8 shadow-lg w-[90%]">
+                <?php if ($usertype == 0 || $usertype == 1): ?>
+                    <a href="add_matter_page.php">
+                        <button class="bg-yellow-300 text-gray-900 font-semibold py-3 rounded-lg shadow-md w-full h-12">Add New Matter</button>
+                    </a>
+                <?php endif; ?>
+
+                <table width="90%">
+                    <thead>
+                        <tr>
+                            <th>Matter ID</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($matters as $matter): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($matter['matter_id']); ?></td>
+                                <td><?php echo htmlspecialchars($matter['title']); ?></td>
+                                <td><?php echo htmlspecialchars($matter['description']); ?></td>
+                                <td><?php echo htmlspecialchars($matter['status']); ?></td>
+                                <td><?php echo htmlspecialchars($matter['created_at']); ?></td>
+                                <td>
+                                    <a href="edit_matter_page.php?matter_id=<?php echo $matter['matter_id']; ?>" class="edit-btn">Edit</a>
+                                    | <a href="view_cases_page.php?matter_id=<?php echo $matter['matter_id']; ?>" class="edit-btn">View Cases</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </body>

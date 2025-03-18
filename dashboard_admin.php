@@ -13,6 +13,7 @@ if (!isset($_SESSION['username']) || $_SESSION['usertype'] != 0) {
 <html lang="en">
 <head>
     <title>Dashboard</title>
+    <link rel="stylesheet" href="dashboard_admin.css">
 </head>
 <body class="bg-gray-900 text-white">
     <div class="min-h-screen flex flex-col">

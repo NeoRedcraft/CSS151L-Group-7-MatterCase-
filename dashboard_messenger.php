@@ -2,10 +2,11 @@
 <html>
 <head>  
     <title>messenger page</title>
-    <link rel="stylesheet" href="dashboard_admin.css">
 </head>
 <body>
-<div class="buttons-container">
+    <a href="view_clients_page.php"><button class="action-btn">View Clients</button></a>
+    <a href="view_matters_page.php"><button class="action-btn">View Matters</button></a>
+    <div class="buttons-container">
         <a href="logout.php"><button class="action-btn">Logout</button></a>
     </div>
 </body>

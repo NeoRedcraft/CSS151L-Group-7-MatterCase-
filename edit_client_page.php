@@ -1,5 +1,6 @@
 <?php
 include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/edit_client.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/edit_client.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,62 +52,70 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/edit_client.php"
     </script>
 </head>
 <body>
-    <a href="<?php
-        switch ($usertype) {
-            case 0: echo 'dashboard_admin.php'; break;
-            case 1: echo 'dashboard_partner.php'; break;
-            default: echo 'login_page.php'; break;
-        }
-    ?>" class="back-link">Back to Dashboard</a>
+    <h1>Edit Client</h1>
 
-    <div class="container">
-        <h1>Edit Client</h1>
+    <!-- Display Success/Error Messages -->
+    <?php
+    if (isset($_GET['success'])) {
+        echo "<p style='color: green;'>Action completed successfully!</p>";
+    } elseif (isset($_GET['error'])) {
+        echo "<p style='color: red;'>An error occurred. Please try again.</p>";
+    }
+    ?>
 
-        <form action="edit_client_page.php?client_id=<?php echo $client_id; ?>" method="POST" enctype="multipart/form-data">
-            <div class="input-box">
-                <label for="client-name">Client Name:</label>
-                <input type="text" id="client-name" name="client_name" value="<?php echo htmlspecialchars($client_name); ?>" required>
-            </div>
-            <div class="input-box">
-                <label for="client-email">Email:</label>
-                <input type="email" id="client-email" name="client_email" value="<?php echo htmlspecialchars($email); ?>" required>
-            </div>
-            <div class="file-input-container">
-                <label class="file-label" for="client-file">Upload File:</label>
-                <input type="file" id="client-file" name="client_file">
-            </div>
-            <button type="submit" name="update">Update Client</button>
-        </form>
+    <!-- Back to Dashboard Button -->
+    <p>
+        <a href="<?php
+            // Redirect to the appropriate dashboard based on usertype
+            switch ($usertype) {
+                case 0: // Admin
+                    echo 'dashboard_admin.php';
+                    break;
+                case 1: // Partner
+                    echo 'dashboard_partner.php';
+                    break;
+                default:
+                    echo 'login_page.php'; // Fallback to login page
+                    break;
+            }
+        ?>">Back to Dashboard</a>
+    </p>
 
-        <div class="related-matters">
-            <h2>Related Matters</h2>
-            <form method="post" action="edit_client_page.php?client_id=<?php echo $client_id; ?>">
-                <ul id="related-matters-list">
-                    <?php
-                    $query = "SELECT m.matter_id, m.title FROM matters m
-                              JOIN client_matters cm ON m.matter_id = cm.matter_id
-                              WHERE cm.client_id = ?";
-                    $stmt = $conn->prepare($query);
-                    $stmt->bind_param("i", $client_id);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
+    <!-- Display Related Matters -->
+    <div class="related-matters">
+        <h2>Related Matters</h2>
+        <form method="post" action="edit_client_page.php?client_id=<?php echo $client_id; ?>">
+            <ul id="related-matters-list">
+                <?php
+                // Fetch related matters for the client
+                $query = "
+                    SELECT m.matter_id, m.title 
+                    FROM matters m
+                    JOIN client_matters cm ON m.matter_id = cm.matter_id
+                    WHERE cm.client_id = ?
+                ";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("i", $client_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
 
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $decrypted_title = decryptData($row['title'], $key, $method);
-                            echo "<li class='matter-item' data-matter-id='" . htmlspecialchars($row['matter_id']) . "'>
-                                <input type='checkbox' name='remove_matter_ids[]' value='" . htmlspecialchars($row['matter_id']) . "'> 
-                                <span id='matter-title-" . htmlspecialchars($row['matter_id']) . "'>" . htmlspecialchars($decrypted_title) . "</span>
-                                <button type='button' onclick='removeMatter(this)'>Remove</button>
-                            </li>";
-                        }
-                    } else {
-                        echo "<p>No related matters found.</p>";
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        // Decrypt the matter title
+                        $decrypted_title = decryptData($row['title'], $key, $method);
+                        echo "<li class='matter-item' data-matter-id='" . htmlspecialchars($row['matter_id']) . "'>
+                            <input type='checkbox' name='remove_matter_ids[]' value='" . htmlspecialchars($row['matter_id']) . "'> 
+                            <span id='matter-title-" . htmlspecialchars($row['matter_id']) . "'>" . htmlspecialchars($decrypted_title) . "</span>
+                        </li>";
                     }
-                    ?>
-                </ul>
-            </form>
-        </div>
+                } else {
+                    echo "No related matters found.";
+                }
+                ?>
+            </ul>
+            <p><button type="submit" name="remove_matters">Remove Selected Matters</button></p>
+        </form>
+    </div>
 
         <h2>All Matters</h2>
         <input type="text" id="search" placeholder="Search matters..." onkeyup="filterMatters()">
@@ -115,20 +124,26 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/edit_client.php"
             $query = "SELECT matter_id, title FROM matters";
             $result = $conn->query($query);
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $decrypted_title = decryptData($row['title'], $key, $method);
-                    echo "<div>
-                        <input type='checkbox' name='matter_ids[]' value='" . htmlspecialchars($row['matter_id']) . "' id='matter-id-" . htmlspecialchars($row['matter_id']) . "'>
-                        <span id='matter-title-" . htmlspecialchars($row['matter_id']) . "'>" . htmlspecialchars($decrypted_title) . "</span>
-                    </div>";
-                }
-            } else {
-                echo "<p>No matters found.</p>";
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                // Decrypt the matter title
+                $decrypted_title = decryptData($row['title'], $key, $method);
+
+                // Check if the matter is already associated with the client
+                $isChecked = in_array($row['matter_id'], $relatedMatterIds) ? 'checked' : '';
+
+                echo "<div>
+                    <input type='checkbox' name='matter_ids[]' value='" . htmlspecialchars($row['matter_id']) . "' id='matter-id-" . htmlspecialchars($row['matter_id']) . "' $isChecked>
+                    <span id='matter-title-" . htmlspecialchars($row['matter_id']) . "'>" . htmlspecialchars($decrypted_title) . "</span>
+                </div>";
             }
-            ?>
-        </div>
-        <button onclick="addMatters()">Add Selected Matters</button>
+        } else {
+            echo "No matters found.";
+        }
+        ?>
     </div>
+    <form method="post" action="edit_client_page.php?client_id=<?php echo $client_id; ?>">
+        <p><button type="submit" name="add_matters">Add Selected Matters</button></p>
+    </form>
 </body>
 </html>

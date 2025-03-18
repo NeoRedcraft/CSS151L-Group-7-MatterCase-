@@ -1,7 +1,8 @@
 <?php
 session_start();
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php"); // Include encryption function
-include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/audit_log.php"); // Include encryption function
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/encryption.php"); 
+include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/audit_log.php"); 
+
 // Check if the user is logged in
 if (!isset($_SESSION['id'])) {
     header('Location: login_page.php');
@@ -26,75 +27,59 @@ if ($conn->connect_error) {
 // Ensure the uploads directory exists
 $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/ITS122L-MatterCase/uploads/";
 if (!is_dir($upload_dir)) {
-    mkdir($upload_dir, 0755, true); // Create the directory with proper permissions
+    mkdir($upload_dir, 0755, true);
 }
 
-// Process form submission
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get form data
     $case_id = $_POST['case_id'];
     $form_title = $_POST['form_title'];
     $submission_status = $_POST['submission_status'];
 
-    // Handle file upload
     if (isset($_FILES['file']) && $_FILES['file']['error'] == 0) {
         $file_name = basename($_FILES['file']['name']);
         $file_tmp = $_FILES['file']['tmp_name'];
         $file_size = $_FILES['file']['size'];
         $file_type = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
 
-        // Validate file type and size
         $allowed_types = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'txt'];
         $max_size = 5 * 1024 * 1024; // 5 MB
 
         if (in_array($file_type, $allowed_types) && $file_size <= $max_size) {
-            $file_name = uniqid() . "_" . $file_name; // Unique file name to prevent conflicts
-            $file_path = $upload_dir . $file_name; // Full server path
-            $relative_path = "uploads/" . $file_name; // Relative path for database
+            $file_name = uniqid() . "_" . $file_name;
+            $file_path = $upload_dir . $file_name;
+            $relative_path = "uploads/" . $file_name;
 
-            // Move the uploaded file to the uploads directory
             if (move_uploaded_file($file_tmp, $file_path)) {
-                // Insert the new form into the database
                 $stmt = $conn->prepare("INSERT INTO forms (case_id, form_title, file_path, submission_status) VALUES (?, ?, ?, ?)");
                 $stmt->bind_param("isss", $case_id, $form_title, $relative_path, $submission_status);
 
                 if ($stmt->execute()) {
-
-                    // Log the action in the audit log
                     $action = "Added new form $form_title to case ID: $case_id, submission status: $submission_status";
                     logAction($conn, $user_id, $action, $key, $method);
 
-                    // Redirect back to the case details page with a success message
                     header("Location: view_case_details.php?case_id=$case_id&success=1");
                     exit();
-
                 } else {
-                    // Redirect back to the add form page with an error message
                     header("Location: add_form_page.php?case_id=$case_id&error=1");
                     exit();
                 }
-
                 $stmt->close();
             } else {
-                // Redirect back to the add form page with an error message
                 header("Location: add_form_page.php?case_id=$case_id&error=1");
                 exit();
             }
         } else {
-            // Redirect back to the add form page with an error message
             header("Location: add_form_page.php?case_id=$case_id&error=1");
             exit();
         }
     } else {
-        // Redirect back to the add form page with an error message
         header("Location: add_form_page.php?case_id=$case_id&error=1");
         exit();
     }
-
-    $conn->close();
 }
 
-$case_id = $_GET['case_id']; // Get the case ID from the URL
+$case_id = isset($_GET['case_id']) ? $_GET['case_id'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -102,37 +87,42 @@ $case_id = $_GET['case_id']; // Get the case ID from the URL
 <head>
     <meta charset="UTF-8">
     <title>Add Form</title>
+    <link rel="stylesheet" href="add_invoice_page.css">
 </head>
 <body>
-    <h1>Add Form</h1>
+    <img src="img/logo.png" class="logo" alt="Logo">
 
-    <!-- Display success or error messages -->
-    <?php if (isset($_GET['success'])): ?>
-        <p style="color: green;">Form added successfully!</p>
-    <?php elseif (isset($_GET['error'])): ?>
-        <p style="color: red;">Failed to add form. Please try again.</p>
-    <?php endif; ?>
+    <div class="invoice-container">
+        <h1>Add Form</h1>
 
-    <!-- Form to Add a New Form -->
-    <form action="add_form_page.php" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="case_id" value="<?php echo $case_id; ?>">
+        <!-- Display success or error messages -->
+        <?php if (isset($_GET['success'])): ?>
+            <p style="color: green;">Form added successfully!</p>
+        <?php elseif (isset($_GET['error'])): ?>
+            <p style="color: red;">Failed to add form. Please try again.</p>
+        <?php endif; ?>
 
-        <label for="form_title">Form Title:</label>
-        <input type="text" id="form_title" name="form_title" required><br><br>
+        <!-- Form to Add a New Form -->
+        <form action="add_form_page.php" method="POST" enctype="multipart/form-data" class="invoice-form">
+            <input type="hidden" id="case_id" name="case_id" value="<?php echo htmlspecialchars($case_id); ?>">
 
-        <label for="file">File:</label>
-        <input type="file" id="file" name="file" required><br><br>
+            <label for="form_title">Form Title:</label>
+            <input type="text" id="form_title" name="form_title" required>
 
-        <label for="submission_status">Submission Status:</label>
-        <select id="submission_status" name="submission_status" required>
-            <option value="Submitted">Submitted</option>
-            <option value="Pending">Pending</option>
-            <option value="Rejected">Rejected</option>
-        </select><br><br>
+            <label for="file">File:</label>
+            <input type="file" id="file" name="file" required>
 
-        <button type="submit">Add Form</button>
-    </form>
+            <label for="submission_status">Submission Status:</label>
+            <select id="submission_status" name="submission_status" required>
+                <option value="Submitted">Submitted</option>
+                <option value="Pending">Pending</option>
+                <option value="Rejected">Rejected</option>
+            </select>
 
-    <p><a href="view_case_details.php?case_id=<?php echo $case_id; ?>">Back to Case Details</a></p>
+            <button type="submit">Add Form</button>
+        </form>
+
+        <a href="view_case_details.php?case_id=<?php echo htmlspecialchars($case_id); ?>" class="button">Back to Case Details</a>
+    </div>
 </body>
 </html>

@@ -25,7 +25,6 @@ if ($conn->connect_error) {
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get form data
     $case_id = $_POST['case_id'];
     $amount = $_POST['amount'];
     $fee_description = $_POST['fee_description'];
@@ -37,11 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("idsss", $case_id, $amount, $fee_description, $payment_status, $due_date);
 
     if ($stmt->execute()) {
-        // Redirect back to the case details page with a success message
         header("Location: view_case_details.php?case_id=$case_id&success=1");
         exit();
     } else {
-        // Redirect back to the add case fee page with an error message
         header("Location: add_case_fee_page.php?case_id=$case_id&error=1");
         exit();
     }
@@ -63,38 +60,55 @@ $case_id = $_GET['case_id']; // Get the case ID from the URL
 </head>
 <body>
     <img src="img/logo.png" alt="Logo" class="logo">
-    <h1>Add Case Fee</h1>
+    
+    <div class="container">
+        <h1 class="title">Add Case Fee</h1>
 
-    <!-- Display success or error messages -->
-    <?php if (isset($_GET['success'])): ?>
-        <p style="color: green;">Case fee added successfully!</p>
-    <?php elseif (isset($_GET['error'])): ?>
-        <p style="color: red;">Failed to add case fee. Please try again.</p>
-    <?php endif; ?>
+        <!-- Display success or error messages -->
+        <?php if (isset($_GET['success'])): ?>
+            <p style="color: green; text-align: center;">Case fee added successfully!</p>
+        <?php elseif (isset($_GET['error'])): ?>
+            <p style="color: red; text-align: center;">Failed to add case fee. Please try again.</p>
+        <?php endif; ?>
 
-    <!-- Form to Add a New Case Fee -->
-    <form action="add_case_fee_page.php" method="POST">
-        <input type="hidden" name="case_id" value="<?php echo $case_id; ?>">
+        <!-- Form to Add a New Case Fee -->
+        <form action="add_case_fee_page.php" method="POST">
+            <input type="hidden" name="case_id" value="<?php echo $case_id; ?>">
 
-        <label for="amount">Amount:</label>
-        <input type="number" id="amount" name="amount" step="0.01" required><br><br>
+            <div class="user-details">
+                <div class="input-box">
+                    <label class="details" for="amount">Amount:</label>
+                    <input type="number" id="amount" name="amount" step="0.01" required>
+                </div>
 
-        <label for="fee_description">Description:</label>
-        <textarea id="fee_description" name="fee_description" required></textarea><br><br>
+                <div class="input-box">
+                    <label class="details" for="due_date">Due Date:</label>
+                    <input type="date" id="due_date" name="due_date" required>
+                </div>
+            </div>
 
-        <label for="payment_status">Payment Status:</label>
-        <select id="payment_status" name="payment_status" required>
-            <option value="Unpaid">Unpaid</option>
-            <option value="Paid">Paid</option>
-            <option value="Overdue">Overdue</option>
-        </select><br><br>
+            <div class="input-box" style="width: 100%;">
+                <label class="details" for="fee_description">Description:</label>
+                <textarea id="fee_description" name="fee_description" required style="width: 100%; height: 80px; border-radius: 5px; padding: 10px; border: 1px solid #ccc;"></textarea>
+            </div>
 
-        <label for="due_date">Due Date:</label>
-        <input type="date" id="due_date" name="due_date" required><br><br>
+            <div class="input-box" style="width: 100%;">
+                <label class="details" for="payment_status">Payment Status:</label>
+                <select id="payment_status" name="payment_status" required>
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Overdue">Overdue</option>
+                </select>
+            </div>
 
-        <button type="submit">Add Fee</button>
-    </form>
+            <div class="button">
+                <input type="submit" value="Add Fee">
+            </div>
+        </form>
 
-    <p><a href="view_case_details.php?case_id=<?php echo $case_id; ?>">Back to Case Details</a></p>
+        <p style="text-align: center; margin-top: 15px;">
+            <a href="view_case_details.php?case_id=<?php echo $case_id; ?>" style="text-decoration: none; color: #113dff; font-weight: 600;">Back to Case Details</a>
+        </p>
+    </div>
 </body>
 </html>

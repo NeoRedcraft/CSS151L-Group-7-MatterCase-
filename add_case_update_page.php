@@ -38,7 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->store_result();
 
     if ($stmt->num_rows == 0) {
-        // If the user ID is invalid, show an error
         die("Error: Invalid user ID. Please log in again.");
     }
 
@@ -47,11 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("isi", $case_id, $update_text, $updated_by);
 
     if ($stmt->execute()) {
-        // Redirect back to the case details page with a success message
         header("Location: view_case_details.php?case_id=$case_id&success=1");
         exit();
     } else {
-        // Redirect back to the add case update page with an error message
         header("Location: add_case_update_page.php?case_id=$case_id&error=1");
         exit();
     }
@@ -68,27 +65,32 @@ $case_id = $_GET['case_id']; // Get the case ID from the URL
 <head>
     <meta charset="UTF-8">
     <title>Add Case Update</title>
+    <link rel="stylesheet" href="add_invoice_page.css"> <!-- Match previous styling -->
 </head>
 <body>
-    <h1>Add Case Update</h1>
+    <img src="img/logo.png" class="logo" alt="Logo"> <!-- Logo for consistency -->
 
-    <!-- Display success or error messages -->
-    <?php if (isset($_GET['success'])): ?>
-        <p style="color: green;">Case update added successfully!</p>
-    <?php elseif (isset($_GET['error'])): ?>
-        <p style="color: red;">Failed to add case update. Please try again.</p>
-    <?php endif; ?>
+    <div class="invoice-container"> <!-- Styled container -->
+        <h1>Add Case Update</h1>
 
-    <!-- Form to Add a New Case Update -->
-    <form action="add_case_update_page.php" method="POST">
-        <input type="hidden" name="case_id" value="<?php echo $case_id; ?>">
+        <!-- Display success or error messages -->
+        <?php if (isset($_GET['success'])): ?>
+            <p style="color: green;">Case update added successfully!</p>
+        <?php elseif (isset($_GET['error'])): ?>
+            <p style="color: red;">Failed to add case update. Please try again.</p>
+        <?php endif; ?>
 
-        <label for="update_text">Update Text:</label>
-        <textarea id="update_text" name="update_text" required></textarea><br><br>
+        <!-- Form to Add a New Case Update -->
+        <form action="add_case_update_page.php" method="POST" class="invoice-form">
+            <input type="hidden" name="case_id" value="<?php echo htmlspecialchars($case_id); ?>">
 
-        <button type="submit">Add Update</button>
-    </form>
+            <label for="update_text">Update Text:</label>
+            <textarea id="update_text" name="update_text" required class="input-field"></textarea>
 
-    <p><a href="view_case_details.php?case_id=<?php echo $case_id; ?>">Back to Case Details</a></p>
+            <button type="submit">Add Update</button>
+        </form>
+
+        <a href="view_case_details.php?case_id=<?php echo htmlspecialchars($case_id); ?>" class="button">Back to Case Details</a>
+    </div>
 </body>
 </html>

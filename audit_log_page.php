@@ -5,12 +5,10 @@ include_once($_SERVER['DOCUMENT_ROOT'] . "/MatterCase/Functions/decrypt.php");
 
 global $key, $method;
 
-
 if (!isset($_SESSION['id'])) {
     header("Location: login.php");
     exit();
 }
-
 
 if (isset($_POST['delete_id'])) {
     $delete_id = intval($_POST['delete_id']);
@@ -26,7 +24,6 @@ if (isset($_POST['delete_id'])) {
         mysqli_stmt_close($stmt);
     }
 }
-
 
 $query = "SELECT audit_log.*, users.username 
           FROM audit_log 
@@ -45,46 +42,48 @@ if (!$result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audit Log</title>
+    <link rel="stylesheet" href="cases_page.css">
     <script>
         function Delete(id) {
-                document.getElementById('deleteForm' + id).submit();
+            document.getElementById('deleteForm' + id).submit();
         }
     </script>
 </head>
 <body>
-    <h1>Audit Log</h1>
-    <a href="dashboard_admin.php">Back to Dashboard</a>
-    <br><br>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>User ID</th>
-                <th>Username</th>
-                <th>Action</th>
-                <th>Timestamp</th>
-                <th>Delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+    <img src="img/logo.png" class="logo" alt="Company Logo">
+    <div class="container">
+        <h1>Audit Log</h1>
+        <a href="dashboard_admin.php" class="back-button">Back to Dashboard</a>
+        <table>
+            <thead>
                 <tr>
-                    <td><?php echo htmlspecialchars($row['id']); ?></td>
-                    <td><?php echo htmlspecialchars($row['user_id']); ?></td>
-                    <td><?php echo htmlspecialchars($row['username'] ?? 'N/A'); ?></td>
-                    <td><?php echo htmlspecialchars(decryptData($row['action'], $key, $method)); ?></td>
-                    <td><?php echo htmlspecialchars($row['timestamp']); ?></td>
-                    <td>
-                        <form id="deleteForm<?php echo $row['id']; ?>" method="post">
-                            <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
-                            <button type="button" onclick="Delete(<?php echo $row['id']; ?>)">Delete</button>
-                        </form>
-                    </td>
+                    <th>ID</th>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                    <th>Timestamp</th>
+                    <th>Delete</th>
                 </tr>
-            <?php endwhile; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['user_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['username'] ?? 'N/A'); ?></td>
+                        <td><?php echo htmlspecialchars(decryptData($row['action'], $key, $method)); ?></td>
+                        <td><?php echo htmlspecialchars($row['timestamp']); ?></td>
+                        <td>
+                            <form id="deleteForm<?php echo $row['id']; ?>" method="post">
+                                <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
+                                <button type="button" onclick="Delete(<?php echo $row['id']; ?>)">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
 

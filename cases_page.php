@@ -25,34 +25,36 @@ if (!$result) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Audit Log</title>
+    <link rel="stylesheet" href="cases_page.css">
 </head>
 <body>
-    <h1>Audit Log</h1>
-    <a href="dashboard_admin.php">Back to Dashboard</a>
-    <br><br>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>User ID</th>
-                <th>Username</th>
-                <th>Action</th>
-                <th>Timestamp</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php while ($row = mysqli_fetch_assoc($result)): ?>
+    <img src="img/logo.png" class="logo" alt="Company Logo">
+    <div class="container">
+        <h1>Audit Log</h1>
+        <a href="dashboard_admin.php" class="back-button">Back to Dashboard</a>
+        <table>
+            <thead>
                 <tr>
-                    <td><?php echo htmlspecialchars($row['id']); ?></td>
-                    <td><?php echo htmlspecialchars($row['user_id']); ?></td>
-                    <td><?php echo htmlspecialchars($row['username'] ?? 'N/A'); ?></td>
-                    <td><?php echo htmlspecialchars($row['action']); ?></td>
-                    <td><?php echo htmlspecialchars($row['timestamp']); ?></td>
+                    <th>ID</th>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Action</th>
+                    <th>Timestamp</th>
                 </tr>
-            <?php endwhile; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['user_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['username'] ?? 'N/A'); ?></td>
+                        <td><?php echo htmlspecialchars($row['action']); ?></td>
+                        <td><?php echo htmlspecialchars($row['timestamp']); ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
 

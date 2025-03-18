@@ -2,11 +2,14 @@
 <html>
 <head>  
     <title>partner page</title>
+    <link rel="stylesheet" href="dashboard_admin.css">
 </head>
 <body>
 <h1>Partner Dashboard</h1>
-    <a href="view_users_admin.php" class="button">View Users</a>
-    <a href="audit_log_page.php" class="button">View Audit Log</a>
-    <a href="logout.php">Log out </a>
+<div class="buttons-container">
+        <a href="view_users_admin.php"><button class="action-btn">View Users</button></a>
+        <a href="audit_log_page.php"><button class="action-btn">View Audit Log</button></a>
+        <a href="logout.php"><button class="action-btn">Logout</button></a>
+    </div>
 </body>
 </html>
